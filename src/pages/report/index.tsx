@@ -41,6 +41,32 @@ export default function ReportPage() {
     setCurrentVillage(village);
     setCurrentVillageData(surveyData?.[village] || []);
   };
+
+  const downloadData = async () => {
+    try {
+      startLoad();
+
+      axiosInstance
+        .get("/surveyData/download?village_name=" + currentVillage, {
+          maxBodyLength: Infinity,
+          responseType: "blob",
+        })
+        .then((response) => {
+          //console.log(JSON.stringify(response.data));
+          const link = document.createElement("a");
+          link.href = URL.createObjectURL(new Blob([response.data]));
+          link.download = `${currentVillage}.xlsx`;
+          link.click();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } catch (err) {
+      console.log(err);
+    } finally {
+      stopLoad();
+    }
+  };
   return (
     <div className="flex items-center justify-center m-2 p-2 flex-col space-y-3">
       <div className="flex flex-col space-y-3">
@@ -56,7 +82,10 @@ export default function ReportPage() {
               value={currentVillage}
             />
           </div>
-          <span className="flex gap-2 items-center justify-center">
+          <span
+            className="flex gap-2 items-center justify-center cursor-pointer"
+            onClick={downloadData}
+          >
             <Download className="w-5 h-5" /> Download Data
           </span>
         </div>
