@@ -35,7 +35,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   const clearSession = () => {
     localStorage.removeItem("token");
     setToken(null);
-    redirect("/");
+    navigate("/");
   };
 
   const isTokenExpired = () => {

@@ -1,16 +1,7 @@
 "use client";
 
-import { TrendingUp } from "lucide-react";
 import { Pie, PieChart } from "recharts";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import {
   ChartConfig,
   ChartContainer,
@@ -62,10 +53,17 @@ const PieChartComponent = (props: PieChartComponentProps) => {
   return (
     <ChartContainer
       config={props.chartConfig}
-      className="mx-auto aspect-square max-h-[250px]"
+      className="min-h-[15rem] w-full"
     >
       <PieChart>
-        <Pie data={props.chartData} dataKey={props.datakey} />
+        <Pie
+          data={props.chartData}
+          dataKey={"value"}
+          label
+          nameKey={props.XaxisdataKey}
+        />
+        <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+
         <ChartLegend
           content={<ChartLegendContent nameKey={props.XaxisdataKey} />}
           className="-translate-y-2 flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"

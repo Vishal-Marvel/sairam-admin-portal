@@ -7,6 +7,7 @@ import { Providers } from "@/providers/Provider";
 import Login from "@/pages/login";
 import ReportPage from "@/pages/report";
 import AnalysisPage from "./pages/analysis";
+import LogoutPage from "./pages/logout";
 function App() {
   return (
     <BrowserRouter>
@@ -17,6 +18,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/report" element={<ReportPage />} />
           <Route path="/analysis" element={<AnalysisPage />} />
+          <Route path="/logout" element={<LogoutPage />} />
 
           <Route path="*" element={<NotFoundPage />} />
         </Routes>

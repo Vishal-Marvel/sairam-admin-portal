@@ -9,7 +9,19 @@ export type VillageSummary = {
 export type Analytics = {
   villageSummary: VillageSummary[];
   problems: ProblemStatements[];
-}
+};
+
+export type AnalyticsSummary = {
+  male: number;
+  female: number;
+  others: number;
+  category: Record<string, number>;
+  mode_of_water_storage: Record<string, number>;
+  water_collection_type: Record<string, number>;
+  used_for_cooking: Record<string, number>;
+};
+
+export type VillageWise = Record<string, AnalyticsSummary>;
 
 // Define each individual block
 type StudentInfo = {

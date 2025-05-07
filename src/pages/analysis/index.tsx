@@ -3,14 +3,20 @@ import GraphWrapperComponent from "@/components/GraphWrapperComponent";
 import { ChartConfig } from "@/components/ui/chart";
 import { useLoader } from "@/hooks/use-loader";
 import { axiosInstance } from "@/lib/axiosConfig";
-import { Analytics, VillageSummary } from "@/schema";
+import { VillageWise } from "@/schema";
 import React, { useEffect, useState } from "react";
 import SelectVillage from "../report/SelectVillage";
+import PieChartComponent from "@/components/PieChartComponent";
 
 export default function AnalysisPage() {
-  const [data, setdata] = useState<VillageSummary[]>([]);
+  const [data, setdata] = useState<VillageWise>({});
   const { startLoad, stopLoad } = useLoader();
   const [currentVillage, setCurrentVillage] = useState<string>("");
+  const [genderData, setGenderData] = useState<{}>([]);
+  const [categoryData, setCategoryData] = useState<{}>([]);
+  const [waterStorageData, setWaterStorageData] = useState<{}>([]);
+  const [waterCollectionData, setWaterCollectionData] = useState<{}>([]);
+  const [cookingData, setCookingData] = useState<{}>([]);
   const changeVillage = (village: string) => {
     setCurrentVillage(village);
   };
@@ -18,9 +24,9 @@ export default function AnalysisPage() {
   const getData = async () => {
     try {
       startLoad();
-      const response = await axiosInstance.get("/analytics");
+      const response = await axiosInstance.get("/analytics/villagewise");
       setdata(response.data.villageSummary);
-      console.log(response.data.villageSummary);
+      console.log(response.data);
     } catch (err) {
       console.log(err);
     } finally {
@@ -31,35 +37,77 @@ export default function AnalysisPage() {
     getData();
   }, []);
 
-  const aadhaarChatConfig = {
-    with_aadhaar: {
-      label: "Having Aadhaar",
-      color: "var(--chart-1)",
-    },
-    without_aadhaar: {
-      label: "Not Having Aadhaar",
-      color: "var(--chart-2)",
-    },
+  const genderConfig = {
+    value: { label: "Count" },
+    male: { label: "Male" },
+    female: { label: "Female" },
+    others: { label: "Others" },
   } satisfies ChartConfig;
 
-  const surveyConfig = {
-    total_surveys: {
-      label: "Survey Count",
-      color: "#3b82f6",
-    },
+  const categoryConfig = {
+    value: { label: "Count" },
+    General: { label: "General" },
+    SC: { label: "SC" },
+    ST: { label: "ST" },
+    OBC: { label: "OBC" },
+    BC: { label: "BC" },
+    others: { label: "Others" },
   } satisfies ChartConfig;
-  const familyMembersConfig = {
-    total_members: {
-      label: "Members Count",
-      color: "#8bb216",
-    },
-  } satisfies ChartConfig;
-  const rationCardConfig = {
-    without_ration: {
-      label: "Without Ration Card",
-      color: "#dbb256",
-    },
-  } satisfies ChartConfig;
+  useEffect(() => {
+    setCurrentVillage(Object.keys(data)[0]);
+  }, [data]);
+
+  useEffect(() => {
+    setGenderData([
+      { gender: "male", value: data[currentVillage]?.male, fill: "#3b82f6" },
+      {
+        gender: "female",
+        value: data[currentVillage]?.female,
+        fill: "#f59e0b",
+      },
+      {
+        gender: "others",
+        value: data[currentVillage]?.others,
+        fill: "#ef4444",
+      },
+    ]);
+    if (data[currentVillage]?.category)
+      setCategoryData(
+        Object.keys(data[currentVillage]?.category).map((category) => {
+          return {
+            category: category,
+            value: data[currentVillage]?.category[category],
+          };
+        })
+      );
+
+    // waterStorageData = Object.keys(
+    //   data[currentVillage]?.mode_of_water_storage
+    // ).map((category) => {
+    //   return {
+    //     category: category,
+    //     value: data[currentVillage]?.mode_of_water_storage[category],
+    //   };
+    // });
+
+    // waterCollectionData = Object.keys(
+    //   data[currentVillage]?.water_collection_type
+    // ).map((category) => {
+    //   return {
+    //     category: category,
+    //     value: data[currentVillage]?.water_collection_type[category],
+    //   };
+    // });
+
+    // cookingData = Object.keys(data[currentVillage]?.used_for_cooking).map(
+    //   (category) => {
+    //     return {
+    //       category: category,
+    //       value: data[currentVillage]?.used_for_cooking[category],
+    //     };
+    //   }
+    // );
+  }, [data, currentVillage]);
 
   return (
     <div className="flex flex-col justify-center items-center gap-5 m-5">
@@ -70,22 +118,30 @@ export default function AnalysisPage() {
         <div className="flex items-center gap-2">
           <span>Get Report for </span>
           <SelectVillage
-            villages={["All Villages", ...data.map((v) => v.village_name)]}
+            villages={[...Object.keys(data)]}
             onChange={changeVillage}
             value={currentVillage}
           />
         </div>
       </div>
       <div className="flex flex-wrap justify-center items-center gap-5">
-        <GraphWrapperComponent title="Survey count">
-          <BarChartComponent
-            chartConfig={surveyConfig}
-            chartData={data}
-            XaxisdataKey="village_name"
-            datakeys={["total_surveys"]}
+        <GraphWrapperComponent title="Gender Analysis">
+          <PieChartComponent
+            chartConfig={genderConfig}
+            chartData={genderData}
+            XaxisdataKey="gender"
+            datakey={"value"}
           />
         </GraphWrapperComponent>
-        <GraphWrapperComponent title="Family members count">
+        <GraphWrapperComponent title="Category Analysis">
+          <PieChartComponent
+            chartConfig={categoryConfig}
+            chartData={categoryData}
+            XaxisdataKey="category"
+            datakey={"value"}
+          />
+        </GraphWrapperComponent>
+        {/* <GraphWrapperComponent title="Family members count">
           <BarChartComponent
             chartConfig={familyMembersConfig}
             chartData={data}
@@ -108,7 +164,7 @@ export default function AnalysisPage() {
             XaxisdataKey="village_name"
             datakeys={["without_ration"]}
           />
-        </GraphWrapperComponent>
+        </GraphWrapperComponent> */}
       </div>
     </div>
   );
