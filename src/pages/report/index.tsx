@@ -46,21 +46,20 @@ export default function ReportPage() {
     try {
       startLoad();
 
-      axiosInstance
-        .get("/surveyData/download?village_name=" + currentVillage, {
+      const response = await axiosInstance.get(
+        "/surveyData/download?village_name=" + currentVillage,
+        {
           maxBodyLength: Infinity,
           responseType: "blob",
-        })
-        .then((response) => {
-          //console.log(JSON.stringify(response.data));
-          const link = document.createElement("a");
-          link.href = URL.createObjectURL(new Blob([response.data]));
-          link.download = `${currentVillage}.xlsx`;
-          link.click();
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+        }
+      );
+
+      //console.log(JSON.stringify(response.data));
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(new Blob([response.data]));
+      link.download = `${currentVillage}.xlsx`;
+      link.click();
+      
     } catch (err) {
       console.log(err);
     } finally {
