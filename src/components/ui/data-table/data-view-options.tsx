@@ -20,8 +20,6 @@ interface DataTableViewOptionsProps<TData> {
 export function DataTableViewOptions<TData>({
   table,
 }: DataTableViewOptionsProps<TData>) {
-  const {role} = useSession();
-  const isStudent = role && role.includes("student");
   
   return (
     <DropdownMenu>
@@ -41,7 +39,7 @@ export function DataTableViewOptions<TData>({
           .getAllColumns()
           .filter(
             (column) =>
-             column.getCanHide() && (isStudent && column.id !== "student" ) || !isStudent
+             column.getCanHide()
           )
           .map((column) => {
             return (
