@@ -41,6 +41,14 @@ export default function ReportPage() {
     setCurrentVillageData(surveyData?.[village] || []);
   };
 
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      getData();
+    }, 3000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
   const downloadData = async () => {
     try {
       startLoad();

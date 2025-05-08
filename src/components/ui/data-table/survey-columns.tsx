@@ -35,25 +35,25 @@ export const surveyColumns: ColumnDef<SurveyRecord>[] = [
       return value.includes(row.getValue(id));
     },
   },
-  {
-    accessorKey: "no_of_family_members",
-    id: "no_of_family_members",
-    header: ({ column }) => {
-      return <div className="text-center font-medium"># of family members at home</div>
-      // return (
-      //   <DataTableColumnHeader column={column} title="# of family members at home" />
-      // );
-    },
-    cell: ({ row }) => (
-      <div className="flex items-center justify-center">
-        {row.getValue("no_of_family_members")}
+  // {
+  //   accessorKey: "no_of_family_members",
+  //   id: "no_of_family_members",
+  //   header: ({ column }) => {
+  //     return <div className="text-center font-medium"># of family members at home</div>
+  //     // return (
+  //     //   <DataTableColumnHeader column={column} title="# of family members at home" />
+  //     // );
+  //   },
+  //   cell: ({ row }) => (
+  //     <div className="flex items-center justify-center">
+  //       {row.getValue("no_of_family_members")}
         
-      </div>
-    ),
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
-    },
-  },
+  //     </div>
+  //   ),
+  //   filterFn: (row, id, value) => {
+  //     return value.includes(row.getValue(id));
+  //   },
+  // },
   {
     accessorKey: "no_of_family_members",
     id: "no_of_family_members_received",
