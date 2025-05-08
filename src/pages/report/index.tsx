@@ -26,6 +26,15 @@ export default function ReportPage() {
       stopLoad();
     }
   };
+  const refreshData = async () => {
+    try {
+      const response = await axiosInstance.get("/surveyData/report");
+      setSurveyData(mergeVillageRecords(response.data));
+    } catch (err) {
+      console.log(err);
+    } finally {
+    }
+  };
   useEffect(() => {
     getData();
   }, []);
@@ -43,7 +52,7 @@ export default function ReportPage() {
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      getData();
+      refreshData();
     }, 3000);
 
     return () => clearInterval(intervalId);
