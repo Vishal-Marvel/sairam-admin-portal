@@ -6,10 +6,11 @@ import { SurveyRecord, VillageGroupedData } from "@/schema";
 import { useEffect, useState } from "react";
 import SelectVillage from "./SelectVillage";
 import { Download } from "lucide-react";
+import { mergeVillageRecords } from "@/lib/utils";
 
 export default function ReportPage() {
-  const [surveyData, setSurveyData] = useState<VillageGroupedData>();
-  const [currentVillage, setCurrentVillage] = useState<string>("");
+  const [surveyData, setSurveyData] = useState<VillageGroupedData>({});
+  const [currentVillage, setCurrentVillage] = useState<string>("All Villages");
   const [currentVillageData, setCurrentVillageData] = useState<SurveyRecord[]>(
     []
   );
@@ -18,7 +19,7 @@ export default function ReportPage() {
     try {
       startLoad();
       const response = await axiosInstance.get("/surveyData/report");
-      setSurveyData(response.data);
+      setSurveyData(mergeVillageRecords(response.data));
     } catch (err) {
       console.log(err);
     } finally {
@@ -31,9 +32,7 @@ export default function ReportPage() {
 
   useEffect(() => {
     if (surveyData) {
-      console.log(Object.keys(surveyData)[0]);
-      setCurrentVillage(Object.keys(surveyData)[0]);
-      setCurrentVillageData(Object.values(surveyData)[0]);
+      setCurrentVillageData(surveyData?.[currentVillage]);
     }
   }, [surveyData]);
 
@@ -59,7 +58,6 @@ export default function ReportPage() {
       link.href = URL.createObjectURL(new Blob([response.data]));
       link.download = `${currentVillage}.xlsx`;
       link.click();
-      
     } catch (err) {
       console.log(err);
     } finally {
@@ -76,7 +74,7 @@ export default function ReportPage() {
           <div className="flex items-center gap-2">
             <span>Get Report for </span>
             <SelectVillage
-              villages={Object.keys(surveyData || {})}
+              villages={Object.keys(surveyData)}
               onChange={changeVillage}
               value={currentVillage}
             />

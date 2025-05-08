@@ -1,4 +1,4 @@
-import { VillageWise, AnalyticsSummary } from "@/schema";
+import { VillageWise, AnalyticsSummary, SurveyRecord, VillageGroupedData } from "@/schema";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -64,3 +64,18 @@ export function mergeAnalyticsData(data: VillageWise): AnalyticsSummary {
   return summary;
 }
 
+export function mergeVillageRecords(data: VillageGroupedData): VillageGroupedData {
+  const allRecords: SurveyRecord[] = [];
+
+  for (const village in data) {
+    if (village !== "All Villages") {
+      allRecords.push(...data[village]);
+    }
+  }
+
+  return {
+    
+    "All Villages": allRecords,
+    ...data
+  };
+}

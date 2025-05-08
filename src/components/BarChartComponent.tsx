@@ -29,12 +29,13 @@ const BarChartComponent = (props: BarChartComponentProps) => {
           tickMargin={10}
           axisLine={false}
         />
-        <ChartTooltip content={<ChartTooltipContent />} />
+        <ChartTooltip content={<ChartTooltipContent hideLabel/>} />
         <ChartLegend content={<ChartLegendContent />} />
         {props.datakeys.map((key) => (
           <Bar
             key={key}
             dataKey={key}
+            
             fill={`var(--color-${key})`}
             radius={4}
           />
