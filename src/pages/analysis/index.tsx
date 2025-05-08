@@ -7,16 +7,27 @@ import { VillageWise } from "@/schema";
 import React, { useEffect, useState } from "react";
 import SelectVillage from "../report/SelectVillage";
 import PieChartComponent from "@/components/PieChartComponent";
+import {
+  generateChartConfig,
+  getRandomColor,
+  mergeAnalyticsData,
+} from "@/lib/utils";
 
 export default function AnalysisPage() {
   const [data, setdata] = useState<VillageWise>({});
   const { startLoad, stopLoad } = useLoader();
-  const [currentVillage, setCurrentVillage] = useState<string>("");
+  const [currentVillage, setCurrentVillage] = useState<string>("All Villages");
   const [genderData, setGenderData] = useState<{}>([]);
   const [categoryData, setCategoryData] = useState<{}>([]);
   const [waterStorageData, setWaterStorageData] = useState<{}>([]);
   const [waterCollectionData, setWaterCollectionData] = useState<{}>([]);
   const [cookingData, setCookingData] = useState<{}>([]);
+  const [categoryConfig, setCategoryConfig] = useState<ChartConfig>({});
+  const [waterStorageConfig, setwaterStorageConfig] = useState<ChartConfig>({});
+  const [waterCollectionConfig, setwaterCollectionConfig] =
+    useState<ChartConfig>({});
+  const [cookingConfig, setcookingConfig] = useState<ChartConfig>({});
+
   const changeVillage = (village: string) => {
     setCurrentVillage(village);
   };
@@ -44,81 +55,87 @@ export default function AnalysisPage() {
     others: { label: "Others" },
   } satisfies ChartConfig;
 
-  const categoryConfig = {
-    value: { label: "Count" },
-    General: { label: "General" },
-    SC: { label: "SC" },
-    ST: { label: "ST" },
-    OBC: { label: "OBC" },
-    BC: { label: "BC" },
-    others: { label: "Others" },
-  } satisfies ChartConfig;
   useEffect(() => {
-    setCurrentVillage(Object.keys(data)[0]);
-  }, [data]);
-
-  useEffect(() => {
+    const isAllVillages = currentVillage === "All Villages";
+    const selectedData = isAllVillages
+    ? mergeAnalyticsData(data)
+    : data[currentVillage];
+    console.log(selectedData)
+    if (!selectedData) return;
+    
+    setCategoryConfig(generateChartConfig(selectedData?.category));
+    setwaterStorageConfig(
+      generateChartConfig(selectedData?.mode_of_water_storage)
+    );
+    setwaterCollectionConfig(
+      generateChartConfig(selectedData?.water_collection_type)
+    );
+    setcookingConfig(generateChartConfig(selectedData?.used_for_cooking));
     setGenderData([
-      { gender: "male", value: data[currentVillage]?.male, fill: "#3b82f6" },
+      { gender: "male", value: selectedData?.male, fill: "#3b82f6" },
       {
         gender: "female",
-        value: data[currentVillage]?.female,
+        value: selectedData?.female,
         fill: "#f59e0b",
       },
       {
         gender: "others",
-        value: data[currentVillage]?.others,
+        value: selectedData?.others,
         fill: "#ef4444",
       },
     ]);
-    if (data[currentVillage]?.category)
+    if (selectedData?.category)
       setCategoryData(
-        Object.keys(data[currentVillage]?.category).map((category) => {
+        Object.keys(selectedData?.category).map((category) => {
           return {
             category: category,
-            value: data[currentVillage]?.category[category],
+            value: selectedData?.category[category],
+            fill: getRandomColor(),
           };
         })
       );
-
-    // waterStorageData = Object.keys(
-    //   data[currentVillage]?.mode_of_water_storage
-    // ).map((category) => {
-    //   return {
-    //     category: category,
-    //     value: data[currentVillage]?.mode_of_water_storage[category],
-    //   };
-    // });
-
-    // waterCollectionData = Object.keys(
-    //   data[currentVillage]?.water_collection_type
-    // ).map((category) => {
-    //   return {
-    //     category: category,
-    //     value: data[currentVillage]?.water_collection_type[category],
-    //   };
-    // });
-
-    // cookingData = Object.keys(data[currentVillage]?.used_for_cooking).map(
-    //   (category) => {
-    //     return {
-    //       category: category,
-    //       value: data[currentVillage]?.used_for_cooking[category],
-    //     };
-    //   }
-    // );
+    if (selectedData?.mode_of_water_storage)
+      setWaterStorageData(
+        Object.keys(selectedData?.mode_of_water_storage).map((category) => {
+          return {
+            category: category,
+            value: selectedData?.mode_of_water_storage[category],
+            fill: getRandomColor(),
+          };
+        })
+      );
+    if (selectedData?.water_collection_type)
+      setWaterCollectionData(
+        Object.keys(selectedData?.water_collection_type).map((category) => {
+          return {
+            category: category,
+            value: selectedData?.water_collection_type[category],
+            fill: getRandomColor(),
+          };
+        })
+      );
+    if (selectedData?.used_for_cooking)
+      setCookingData(
+        Object.keys(selectedData?.used_for_cooking).map((category) => {
+          return {
+            category: category,
+            value: selectedData?.used_for_cooking[category],
+            fill: getRandomColor(),
+          };
+        })
+      );
   }, [data, currentVillage]);
 
   return (
     <div className="flex flex-col justify-center items-center gap-5 m-5">
       <span className="w-full uppercase text-center text-4xl font-bold text-amber-600">
-        survey analysis
+        village wise survey analysis
       </span>
       <div className="flex md:px-10 gap-2 w-full">
         <div className="flex items-center gap-2">
           <span>Get Report for </span>
           <SelectVillage
-            villages={[...Object.keys(data)]}
+            villages={["All Villages", ...Object.keys(data)]}
             onChange={changeVillage}
             value={currentVillage}
           />
@@ -141,30 +158,30 @@ export default function AnalysisPage() {
             datakey={"value"}
           />
         </GraphWrapperComponent>
-        {/* <GraphWrapperComponent title="Family members count">
-          <BarChartComponent
-            chartConfig={familyMembersConfig}
-            chartData={data}
-            XaxisdataKey="village_name"
-            datakeys={["total_members"]}
+        <GraphWrapperComponent title="Water Storage Analysis">
+          <PieChartComponent
+            chartConfig={waterStorageConfig}
+            chartData={waterStorageData}
+            XaxisdataKey="category"
+            datakey={"value"}
           />
         </GraphWrapperComponent>
-        <GraphWrapperComponent title="Village Wise Aadhaar">
-          <BarChartComponent
-            chartConfig={aadhaarChatConfig}
-            chartData={data}
-            XaxisdataKey="village_name"
-            datakeys={["with_aadhaar", "without_aadhaar"]}
+        <GraphWrapperComponent title="Water Collection Analysis">
+          <PieChartComponent
+            chartConfig={waterCollectionConfig}
+            chartData={waterCollectionData}
+            XaxisdataKey="category"
+            datakey={"value"}
           />
         </GraphWrapperComponent>
-        <GraphWrapperComponent title="Village Wise Ration Card">
-          <BarChartComponent
-            chartConfig={rationCardConfig}
-            chartData={data}
-            XaxisdataKey="village_name"
-            datakeys={["without_ration"]}
+        <GraphWrapperComponent title="Cooking Analysis">
+          <PieChartComponent
+            chartConfig={cookingConfig}
+            chartData={cookingData}
+            XaxisdataKey="category"
+            datakey={"value"}
           />
-        </GraphWrapperComponent> */}
+        </GraphWrapperComponent>
       </div>
     </div>
   );
