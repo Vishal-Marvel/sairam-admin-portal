@@ -59,6 +59,22 @@ function HomePage() {
     },
   } satisfies ChartConfig;
 
+  useEffect(() => {
+    setdata((prev) => {
+      if (!prev) return null;
+  
+      return {
+        ...prev,
+        villageSummary: prev.villageSummary.map((village) => ({
+          ...village,
+          village_name: village.village_name.split("(")[0].trim(),
+        })),
+        problems: prev.problems ?? [], // Ensure problems is always defined
+      };
+    });
+  }, [data]);
+  
+
   return (
     <div className="flex flex-wrap justify-center items-center gap-5 m-5">
       <span className="w-full uppercase text-center text-4xl font-bold text-amber-600">
