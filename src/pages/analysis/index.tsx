@@ -60,7 +60,6 @@ export default function AnalysisPage() {
     const selectedData = isAllVillages
     ? mergeAnalyticsData(data)
     : data[currentVillage];
-    console.log(selectedData)
     if (!selectedData) return;
     
     setCategoryConfig(generateChartConfig(selectedData?.category));

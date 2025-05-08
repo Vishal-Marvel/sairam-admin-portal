@@ -9,12 +9,13 @@ import Problems from "./Problems";
 
 function HomePage() {
   const [data, setdata] = useState<Analytics | null>(null);
+  const [responseData, setResponseData] = useState<Analytics | null>(null);
   const { startLoad, stopLoad } = useLoader();
   const getData = async () => {
     try {
       startLoad();
       const response = await axiosInstance.get("/analytics");
-      setdata(response.data);
+      setResponseData(response.data);
     } catch (err) {
       console.log(err);
     } finally {
@@ -60,19 +61,16 @@ function HomePage() {
   } satisfies ChartConfig;
 
   useEffect(() => {
-    setdata((prev) => {
-      if (!prev) return null;
+    if (!responseData) return;
   
-      return {
-        ...prev,
-        villageSummary: prev.villageSummary.map((village) => ({
-          ...village,
-          village_name: village.village_name.split("(")[0].trim(),
-        })),
-        problems: prev.problems ?? [], // Ensure problems is always defined
-      };
+    setdata({
+      ...responseData,
+      villageSummary: responseData.villageSummary.map((village) => ({
+        ...village,
+        village_name: village.village_name.split("(")[0].trim(),
+      })),
     });
-  }, [data]);
+  }, [responseData]);
   
 
   return (
