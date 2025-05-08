@@ -79,12 +79,14 @@ export default function ReportPage() {
               value={currentVillage}
             />
           </div>
-          <span
-            className="flex gap-2 items-center justify-center cursor-pointer"
-            onClick={downloadData}
-          >
-            <Download className="w-5 h-5" /> Download Data
-          </span>
+          {currentVillage !== "All Villages" && (
+            <span
+              className="flex gap-2 items-center justify-center cursor-pointer"
+              onClick={downloadData}
+            >
+              <Download className="w-5 h-5" /> Download Data
+            </span>
+          )}
         </div>
         <DataTable data={currentVillageData} columns={surveyColumns} />
       </div>
