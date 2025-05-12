@@ -20,7 +20,7 @@ const SelectVillage = (props: SelectVillageProps) => {
       </SelectTrigger>
       <SelectContent>
         {props.villages.map((village) => (
-          <SelectItem value={village}>{village}</SelectItem>
+          <SelectItem key={village} value={village}>{village}</SelectItem>
         ))}
       </SelectContent>
     </Select>

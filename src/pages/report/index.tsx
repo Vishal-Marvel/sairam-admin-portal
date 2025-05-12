@@ -30,6 +30,7 @@ export default function ReportPage() {
   const refreshData = async () => {
     try {
       const response = await axiosInstance.get("/surveyData/report");
+      if (response.data.length == surveyData.length) return;
       setSurveyData(response.data);
     } catch (err) {
       console.log(err);
@@ -46,7 +47,7 @@ export default function ReportPage() {
     }, 3000);
 
     return () => clearInterval(intervalId);
-  }, []);
+  }, [surveyData]);
 
   const visibleColumns: VisibilityState = {
     village_name: false,
