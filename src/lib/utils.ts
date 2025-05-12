@@ -3,6 +3,7 @@ import {
   AnalyticsSummary,
   SurveyRecord,
   VillageWiseSchemes,
+  Data,
 } from "@/schema";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -81,24 +82,15 @@ export function getUniqueVillageNames(data: SurveyRecord[]): string[] {
   return Array.from(villageNameSet);
 }
 
-export function generateData(
-  data: VillageWiseSchemes
+export function generateData<K extends keyof Data>(
+  data: VillageWiseSchemes,
+  key: K
 ): { village_name: string; count: number }[] {
   const result = [];
   for (const village in data) {
-    const count = data[village].avg_awareness_level;
-    result.push({ village_name: village, count });
+    const count = data[village][key];
+    result.push({ village_name: village.split("(")[0], count });
   }
   return result;
 }
 
-export function generateChartConfig2() {
-  const chartConfig = {
-    count: {
-      label: "Count",
-      //@ts-ignore
-      color: getRandomColor(),
-    },
-  } satisfies ChartConfig;
-  return chartConfig;
-}

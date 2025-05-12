@@ -5,13 +5,13 @@ import { useLoader } from "@/hooks/use-loader";
 import { axiosInstance } from "@/lib/axiosConfig";
 import { VillageWise } from "@/schema";
 import React, { useEffect, useState } from "react";
-import SelectVillage from "../report/SelectVillage";
 import PieChartComponent from "@/components/PieChartComponent";
 import {
   generateChartConfig,
   getRandomColor,
   mergeAnalyticsData,
 } from "@/lib/utils";
+import SelectComponent from "@/components/SelectVillage";
 
 export default function AnalysisPage() {
   const [data, setdata] = useState<VillageWise>({});
@@ -151,10 +151,11 @@ export default function AnalysisPage() {
       <div className="flex md:px-10 gap-2 w-full">
         <div className="flex items-center gap-2">
           <span>Get Report for </span>
-          <SelectVillage
-            villages={["All Villages", ...Object.keys(data)]}
+          <SelectComponent
+            values={["All Villages", ...Object.keys(data)]}
             onChange={changeVillage}
             value={currentVillage}
+            placeholder="Select Village"
           />
         </div>
       </div>

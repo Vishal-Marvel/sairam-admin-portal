@@ -24,7 +24,7 @@ export type AnalyticsSummary = {
 
 export type VillageWise = Record<string, AnalyticsSummary>;
 
-type Data = {
+export type Data = {
   beneficiaries: number;
   avg_awareness_level: number;
 }

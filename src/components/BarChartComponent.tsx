@@ -1,6 +1,14 @@
 "use client";
 
-import { Bar, BarChart, CartesianGrid, LineChart, XAxis } from "recharts";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  LabelList,
+  LineChart,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 import {
   ChartConfig,
@@ -10,6 +18,8 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { useEffect, useRef, useState } from "react";
+import { chownSync } from "fs";
 
 interface BarChartComponentProps {
   chartData: any;
@@ -19,31 +29,64 @@ interface BarChartComponentProps {
 }
 
 const BarChartComponent = (props: BarChartComponentProps) => {
+  const [width, setWidth] = useState<number>(0);
+  const chartRef = useRef(null);
+  useEffect(() => {
+    if (!chartRef.current) return;
+
+    const observer = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        if (entry.contentRect) {
+          setWidth(entry.contentRect.width);
+          console.log(entry.contentRect.width);
+        }
+      }
+    });
+
+    observer.observe(chartRef.current);
+
+    return () => {
+      if (chartRef.current) {
+        observer.unobserve(chartRef.current);
+      }
+    };
+  }, []);
   return (
-    <ChartContainer config={props.chartConfig} className="min-h-[15rem] w-full">
-      <BarChart accessibilityLayer data={props.chartData}>
+    <ChartContainer
+      ref={chartRef}
+      config={props.chartConfig}
+      className="min-h-[15rem] w-full"
+    >
+      <BarChart accessibilityLayer data={props.chartData} margin={{ top: 20 }}>
         <CartesianGrid vertical={false} />
         <XAxis
           dataKey={props.XaxisdataKey}
           tickLine={false}
           tickMargin={10}
           axisLine={false}
-          tickFormatter={(value) => value.slice(0, 7)+".."}
+          tickFormatter={(value) => {
+            console.log(width, width < 600 && value.length > 6
+             );
+            return width < 600 && value.length > 6
+              ? value.slice(0, 6) + "…"
+              : value;
+          }}
         />
-        <ChartTooltip content={<ChartTooltipContent hideIndicator/>} />
+        <YAxis tickLine={false} tickMargin={10} axisLine={false} />
+        <ChartTooltip content={<ChartTooltipContent hideIndicator />} />
         <ChartLegend content={<ChartLegendContent />} />
         {props.datakeys.map((key) => (
-          <Bar
-            key={key}
-            dataKey={key}
-            
-            fill={`var(--color-${key})`}
-            radius={4}
-          />
+          <Bar key={key} dataKey={key} fill={`var(--color-${key})`} radius={4}>
+            <LabelList
+              position="top"
+              offset={6}
+              className="fill-foreground"
+              fontSize={12}
+            />
+          </Bar>
         ))}
       </BarChart>
       {/* <LineChart accessibilityLayer /> */}
-
     </ChartContainer>
   );
 };

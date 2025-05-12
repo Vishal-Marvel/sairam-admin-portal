@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { SessionContext } from "@/providers/context/SessionContext";
-import { redirect, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/sonner";
 import { LoaderModal } from "@/components/Loader";
+import ScrollToTopButton from "@/components/ScrollToTopButton";
 
 export const publicRoutes = ["/", "/login"];
 
@@ -14,7 +15,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     isTokenExpired();
     if (!token && !publicRoutes.includes(pathname)) {
-      //navigate("/");
+      navigate("/");
     }
   }, [pathname, token]);
 
@@ -67,6 +68,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <Toaster position="top-right" />
       <LoaderModal />
       {children}
+      <ScrollToTopButton />
     </SessionContext.Provider>
   );
 }
