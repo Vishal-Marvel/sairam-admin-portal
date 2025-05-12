@@ -2,6 +2,7 @@ import * as React from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
+  PaginationState,
   SortingState,
   VisibilityState,
   flexRender,
@@ -26,6 +27,7 @@ import {
 import { DataTableToolbar } from "@/components/ui/data-table/data-toolbar";
 import { ScrollArea, ScrollBar } from "./scroll-area";
 import { cn } from "@/lib/utils";
+import { DataTablePagination } from "./data-table/data-pagination";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -48,7 +50,7 @@ export function DataTable<TData, TValue>({
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
   const [globalFilter, setGlobalFilter] = React.useState("");
-  // const [pagination, setPagination] = React.useState<PaginationState>({pageSize:5, pageIndex:0});
+  const [pagination, setPagination] = React.useState<PaginationState>({pageSize:8, pageIndex:0});
 
   React.useEffect(() => {
     if (!visibleColumns) return;
@@ -67,7 +69,7 @@ export function DataTable<TData, TValue>({
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
-    // onPaginationChange: setPagination,
+    onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
@@ -82,7 +84,7 @@ export function DataTable<TData, TValue>({
       columnVisibility,
       rowSelection,
       globalFilter,
-      // pagination
+      pagination
     },
   });
 
@@ -146,7 +148,7 @@ export function DataTable<TData, TValue>({
         <ScrollBar orientation="horizontal" />
         <ScrollBar orientation="vertical" />
       </ScrollArea>
-      {/* <DataTablePagination table={table} /> */}
+      <DataTablePagination table={table} />
     </div>
   );
 }

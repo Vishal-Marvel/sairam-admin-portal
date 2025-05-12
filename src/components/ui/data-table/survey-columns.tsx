@@ -9,6 +9,12 @@ import FamilyMembers from "@/pages/report/FamilyMembers";
 
 export const surveyColumns: ColumnDef<SurveyRecord>[] = [
   {
+    id: "s_no",
+    header: () => <div className="text-center font-medium">S. No</div>,
+    cell: ({ row }) => <div className="text-center">{row.index + 1}</div>,
+    size: 50, // optional, controls column width
+  },
+  {
     accessorKey: "survey_date",
     id: "survey_date",
     header: ({ column }) => {
@@ -38,9 +44,7 @@ export const surveyColumns: ColumnDef<SurveyRecord>[] = [
   {
     accessorKey: "village_name",
     id: "village_name",
-    header: () => (
-      <div className="text-center font-medium">Village Name</div>
-    ),
+    header: () => <div className="text-center font-medium">Village Name</div>,
     cell: ({ row }) => (
       <div className="text-center font-medium">
         {row.getValue("village_name")}
@@ -62,7 +66,7 @@ export const surveyColumns: ColumnDef<SurveyRecord>[] = [
   //   cell: ({ row }) => (
   //     <div className="flex items-center justify-center">
   //       {row.getValue("no_of_family_members")}
-        
+
   //     </div>
   //   ),
   //   filterFn: (row, id, value) => {
@@ -74,7 +78,9 @@ export const surveyColumns: ColumnDef<SurveyRecord>[] = [
     id: "no_of_family_members_received",
     header: ({ column }) => {
       return (
-        <div className="text-center font-medium"># of family members info received</div>
+        <div className="text-center font-medium">
+          # of family members info received
+        </div>
         // <DataTableColumnHeader column={column} title="# of family members info received" />
       );
     },
@@ -94,7 +100,7 @@ export const surveyColumns: ColumnDef<SurveyRecord>[] = [
     accessorKey: "has_ration_card",
     id: "has_ration_card",
     header: ({ column }) => {
-      return <div className="text-center font-medium">Has Ration Card</div>
+      return <div className="text-center font-medium">Has Ration Card</div>;
       // return <DataTableColumnHeader column={column} title="Has Ration Card" />;
     },
     cell: ({ row }) => (
@@ -110,7 +116,9 @@ export const surveyColumns: ColumnDef<SurveyRecord>[] = [
     accessorKey: "no_of_members_without_aadhaar",
     id: "no_of_members_without_aadhaar",
     header: ({ column }) => {
-      return <div className="text-center font-medium"># of Without Aadhaar</div>
+      return (
+        <div className="text-center font-medium"># of Without Aadhaar</div>
+      );
       // return (
       //   <DataTableColumnHeader column={column} title="# of Without Aadhaar" />
       // );

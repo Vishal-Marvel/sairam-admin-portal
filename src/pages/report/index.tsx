@@ -13,7 +13,7 @@ import { toast } from "sonner";
 
 export default function ReportPage() {
   const [surveyData, setSurveyData] = useState<SurveyRecord[]>([]);
-  const [currentVillage, setCurrentVillage] = useState<string>("");
+  const [currentVillage, setCurrentVillage] = useState<string>("All Villages");
 
   const { startLoad, stopLoad } = useLoader();
   const getData = async () => {
@@ -54,14 +54,14 @@ export default function ReportPage() {
 
   const downloadData = async () => {
     try {
-      if (currentVillage == ""){
+      if (currentVillage == "") {
         toast("Please select a village");
         return;
       }
       startLoad();
 
       const response = await axiosInstance.get(
-        "/surveyData/download?village_name=" + currentVillage,
+        "/surveyData/download?village_name=" + (currentVillage == "All Villages" ? "" : currentVillage),
         {
           maxBodyLength: Infinity,
           responseType: "blob",
@@ -90,22 +90,24 @@ export default function ReportPage() {
           <div className="flex items-center gap-2">
             <span>Download Report for </span>
             <SelectVillage
-              villages={getUniqueVillageNames(surveyData)}
+              villages={["All Villages", ...getUniqueVillageNames(surveyData)]}
               onChange={setCurrentVillage}
               value={currentVillage}
             />
           </div>
-          {currentVillage !== "All Villages" && (
-            <Button
-              variant={"primary"}
-              className="flex gap-2 items-center justify-center cursor-pointer"
-              onClick={downloadData}
-            >
-              <Download className="w-5 h-5" /> Download Data
-            </Button>
-          )}
+          <Button
+            variant={"primary"}
+            className="flex gap-2 items-center justify-center cursor-pointer"
+            onClick={downloadData}
+          >
+            <Download className="w-5 h-5" /> Download Data
+          </Button>
         </div>
-        <DataTable data={surveyData} columns={surveyColumns} />
+        <DataTable
+          data={surveyData}
+          columns={surveyColumns}
+          visibleColumns={visibleColumns}
+        />
       </div>
     </div>
   );
