@@ -3,7 +3,7 @@ import GraphWrapperComponent from "@/components/GraphWrapperComponent";
 import { ChartConfig } from "@/components/ui/chart";
 import { useLoader } from "@/hooks/use-loader";
 import { axiosInstance } from "@/lib/axiosConfig";
-import { generateChartConfig2, generateData } from "@/lib/utils";
+import { generateData } from "@/lib/utils";
 import { Schemes } from "@/schema";
 import React, { useEffect, useState } from "react";
 import { data } from "react-router-dom";
@@ -27,6 +27,12 @@ export default function SchemePage() {
     getData();
   }, []);
 
+  const chartConfig = {
+    count: {
+      label: "Count",
+      color: "var(--chart-1)",
+    },
+  } satisfies ChartConfig;
   return (
     <div className="flex flex-wrap justify-center items-center gap-5 m-5">
       <span className="w-full uppercase text-center text-4xl font-bold text-amber-600">
@@ -39,7 +45,7 @@ export default function SchemePage() {
             title={key.replaceAll("_", " ") + " Scheme Avg Awareness level"}
           >
             <BarChartComponent
-              chartConfig={generateChartConfig2()}
+              chartConfig={chartConfig}
               //@ts-ignore
               chartData={generateData(schemeData[key])}
               XaxisdataKey="village_name"
