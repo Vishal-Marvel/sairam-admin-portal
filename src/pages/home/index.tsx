@@ -110,9 +110,9 @@ function HomePage() {
           datakeys={["without_ration", "total_surveys"]}
         />
       </GraphWrapperComponent>
-      <div className="w-[90%]">
+      {/* <div className="w-[90%]">
         <Problems problems={data?.problems ?? []} />
-      </div>
+      </div> */}
     </div>
   );
 }

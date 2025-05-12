@@ -1,4 +1,9 @@
-import { VillageWise, AnalyticsSummary, SurveyRecord, VillageGroupedData } from "@/schema";
+import {
+  VillageWise,
+  AnalyticsSummary,
+  SurveyRecord,
+  VillageWiseSchemes,
+} from "@/schema";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -39,6 +44,7 @@ export function mergeAnalyticsData(data: VillageWise): AnalyticsSummary {
     mode_of_water_storage: {},
     water_collection_type: {},
     used_for_cooking: {},
+    sanitation_system_type: {},
   };
 
   for (const village in data) {
@@ -52,6 +58,7 @@ export function mergeAnalyticsData(data: VillageWise): AnalyticsSummary {
       "mode_of_water_storage",
       "water_collection_type",
       "used_for_cooking",
+      "sanitation_system_type",
     ] as const;
 
     for (const key of keysToMerge) {
@@ -64,18 +71,34 @@ export function mergeAnalyticsData(data: VillageWise): AnalyticsSummary {
   return summary;
 }
 
-export function mergeVillageRecords(data: VillageGroupedData): VillageGroupedData {
-  const allRecords: SurveyRecord[] = [];
+export function getUniqueVillageNames(data: SurveyRecord[]): string[] {
+  const villageNameSet = new Set<string>();
 
-  for (const village in data) {
-    if (village !== "All Villages") {
-      allRecords.push(...data[village]);
-    }
+  for (const record of data) {
+    villageNameSet.add(record.village_name);
   }
 
-  return {
-    
-    "All Villages": allRecords,
-    ...data
-  };
+  return Array.from(villageNameSet);
+}
+
+export function generateData(
+  data: VillageWiseSchemes
+): { village_name: string; count: number }[] {
+  const result = [];
+  for (const village in data) {
+    const count = data[village].avg_awareness_level;
+    result.push({ village_name: village, count });
+  }
+  return result;
+}
+
+export function generateChartConfig2() {
+  const chartConfig = {
+    count: {
+      label: "Count",
+      //@ts-ignore
+      color: getRandomColor(),
+    },
+  } satisfies ChartConfig;
+  return chartConfig;
 }

@@ -2,24 +2,25 @@ import { DataTable } from "@/components/ui/data-table";
 import { surveyColumns } from "@/components/ui/data-table/survey-columns";
 import { useLoader } from "@/hooks/use-loader";
 import { axiosInstance } from "@/lib/axiosConfig";
-import { SurveyRecord, VillageGroupedData } from "@/schema";
+import { SurveyRecord } from "@/schema";
 import { useEffect, useState } from "react";
 import SelectVillage from "./SelectVillage";
 import { Download } from "lucide-react";
-import { mergeVillageRecords } from "@/lib/utils";
+import { VisibilityState } from "@tanstack/react-table";
+import { getUniqueVillageNames } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 export default function ReportPage() {
-  const [surveyData, setSurveyData] = useState<VillageGroupedData>({});
-  const [currentVillage, setCurrentVillage] = useState<string>("All Villages");
-  const [currentVillageData, setCurrentVillageData] = useState<SurveyRecord[]>(
-    []
-  );
+  const [surveyData, setSurveyData] = useState<SurveyRecord[]>([]);
+  const [currentVillage, setCurrentVillage] = useState<string>("");
+
   const { startLoad, stopLoad } = useLoader();
   const getData = async () => {
     try {
       startLoad();
       const response = await axiosInstance.get("/surveyData/report");
-      setSurveyData(mergeVillageRecords(response.data));
+      setSurveyData(response.data);
     } catch (err) {
       console.log(err);
     } finally {
@@ -29,7 +30,7 @@ export default function ReportPage() {
   const refreshData = async () => {
     try {
       const response = await axiosInstance.get("/surveyData/report");
-      setSurveyData(mergeVillageRecords(response.data));
+      setSurveyData(response.data);
     } catch (err) {
       console.log(err);
     } finally {
@@ -40,17 +41,6 @@ export default function ReportPage() {
   }, []);
 
   useEffect(() => {
-    if (surveyData) {
-      setCurrentVillageData(surveyData?.[currentVillage]);
-    }
-  }, [surveyData]);
-
-  const changeVillage = (village: string) => {
-    setCurrentVillage(village);
-    setCurrentVillageData(surveyData?.[village] || []);
-  };
-
-  useEffect(() => {
     const intervalId = setInterval(() => {
       refreshData();
     }, 3000);
@@ -58,8 +48,16 @@ export default function ReportPage() {
     return () => clearInterval(intervalId);
   }, []);
 
+  const visibleColumns: VisibilityState = {
+    village_name: false,
+  };
+
   const downloadData = async () => {
     try {
+      if (currentVillage == ""){
+        toast("Please select a village");
+        return;
+      }
       startLoad();
 
       const response = await axiosInstance.get(
@@ -81,31 +79,33 @@ export default function ReportPage() {
       stopLoad();
     }
   };
+
   return (
     <div className="flex items-center justify-center m-2 p-2 flex-col space-y-3">
       <div className="flex flex-col space-y-3">
         <span className="uppercase text-2xl font-bold w-full text-center">
           survey report
         </span>
-        <div className="flex items-center justify-between gap-2 w-full">
+        <div className="flex items-center justify-end gap-2 w-full">
           <div className="flex items-center gap-2">
-            <span>Get Report for </span>
+            <span>Download Report for </span>
             <SelectVillage
-              villages={Object.keys(surveyData)}
-              onChange={changeVillage}
+              villages={getUniqueVillageNames(surveyData)}
+              onChange={setCurrentVillage}
               value={currentVillage}
             />
           </div>
           {currentVillage !== "All Villages" && (
-            <span
+            <Button
+              variant={"primary"}
               className="flex gap-2 items-center justify-center cursor-pointer"
               onClick={downloadData}
             >
               <Download className="w-5 h-5" /> Download Data
-            </span>
+            </Button>
           )}
         </div>
-        <DataTable data={currentVillageData} columns={surveyColumns} />
+        <DataTable data={surveyData} columns={surveyColumns} />
       </div>
     </div>
   );

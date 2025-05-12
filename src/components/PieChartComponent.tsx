@@ -51,10 +51,7 @@ interface PieChartComponentProps {
 }
 const PieChartComponent = (props: PieChartComponentProps) => {
   return (
-    <ChartContainer
-      config={props.chartConfig}
-      className="min-h-[15rem] w-full"
-    >
+    <ChartContainer config={props.chartConfig} className="min-h-[15rem] w-full">
       <PieChart>
         <Pie
           data={props.chartData}
@@ -62,7 +59,7 @@ const PieChartComponent = (props: PieChartComponentProps) => {
           label
           nameKey={props.XaxisdataKey}
         />
-        <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+        <ChartTooltip content={<ChartTooltipContent />} />
 
         <ChartLegend
           content={<ChartLegendContent nameKey={props.XaxisdataKey} />}

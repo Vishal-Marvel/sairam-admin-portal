@@ -8,6 +8,7 @@ import Login from "@/pages/login";
 import ReportPage from "@/pages/report";
 import AnalysisPage from "./pages/analysis";
 import LogoutPage from "./pages/logout";
+import SchemePage from "./pages/schemes";
 function App() {
   return (
     <BrowserRouter>
@@ -18,6 +19,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/report" element={<ReportPage />} />
           <Route path="/analysis" element={<AnalysisPage />} />
+          <Route path="/schemes" element={<SchemePage />} />
           <Route path="/logout" element={<LogoutPage />} />
 
           <Route path="*" element={<NotFoundPage />} />

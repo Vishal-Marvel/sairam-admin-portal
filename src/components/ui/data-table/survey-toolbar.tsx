@@ -4,36 +4,24 @@ import { Table } from "@tanstack/react-table";
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
 }
-function InternshipToolBar<TData>({ table }: DataTableToolbarProps<TData>) {
+function SurveyToolBar<TData>({ table }: DataTableToolbarProps<TData>) {
   return (
     <>
-      {/* {table.getColumn("approval_status") && (
+      
+      {table.getColumn("village_name") && (
         <DataTableFacetedFilter
-          column={table.getColumn("approval_status")}
-          title="Approval Status"
-          options={approvalStatuses}
-        />
-      )}
-      {table.getColumn("internship_status") && (
-        <DataTableFacetedFilter
-          column={table.getColumn("internship_status")}
-          title="Internship Status"
-          options={internshipStatuses}
-        />
-      )}
-      {table.getColumn("mode_of_intern") && (
-        <DataTableFacetedFilter
-          column={table.getColumn("mode_of_intern")}
-          title="Mode Of Intern"
+          column={table.getColumn("village_name")}
+          title="Village Name"
           options={Array.from(
-            table.getColumn("mode_of_intern").getFacetedUniqueValues()
+            table.getColumn("village_name")?.getFacetedUniqueValues() ?? []
           ).map((value) => ({
             value: value[0],
             label: value[0]?.charAt(0).toUpperCase() + value[0]?.slice(1),
           }))}
+          
         />
       )}
-      {table.getColumn("days") && (
+      {/* {table.getColumn("days") && (
         <DataTableFacetedFilter
           column={table.getColumn("days")}
           title="No of Days"
@@ -94,4 +82,4 @@ function InternshipToolBar<TData>({ table }: DataTableToolbarProps<TData>) {
   );
 }
 
-export default InternshipToolBar;
+export default SurveyToolBar;

@@ -21,7 +21,7 @@ const GraphWrapperComponent = (props: GraphWrapperComponentProps) => {
     <Card className="w-[35rem] m-3">
       <CardHeader>
         <CardTitle className="flex justify-between items-center">
-          <span>{props.title}</span>
+          <span className="capitalize">{props.title}</span>
           <ExpandedGraph
             open={open}
             onClose={setOpen}

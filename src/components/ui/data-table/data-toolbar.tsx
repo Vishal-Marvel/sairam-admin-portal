@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 
 import { cn } from "@/lib/utils";
 import { DataTableViewOptions } from "./data-view-options";
+import SurveyToolBar from "./survey-toolbar";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -29,7 +30,7 @@ export function DataTableToolbar<TData>({
           />
         </div>
         <div className={cn("flex flex-wrap gap-1")}>
-        
+          <SurveyToolBar table={table} />
           {isFiltered && (
             <Button
               variant="ghost"

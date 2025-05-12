@@ -22,11 +22,15 @@ export default function AnalysisPage() {
   const [waterStorageData, setWaterStorageData] = useState<{}>([]);
   const [waterCollectionData, setWaterCollectionData] = useState<{}>([]);
   const [cookingData, setCookingData] = useState<{}>([]);
+  const [sanitationSystemTypeData, setSanitationSystemTypeData] = useState<{}>(
+    []
+  );
   const [categoryConfig, setCategoryConfig] = useState<ChartConfig>({});
   const [waterStorageConfig, setwaterStorageConfig] = useState<ChartConfig>({});
   const [waterCollectionConfig, setwaterCollectionConfig] =
     useState<ChartConfig>({});
   const [cookingConfig, setcookingConfig] = useState<ChartConfig>({});
+  const [sanitationConfig, setSanitationConfig] = useState<ChartConfig>({});
 
   const changeVillage = (village: string) => {
     setCurrentVillage(village);
@@ -58,10 +62,10 @@ export default function AnalysisPage() {
   useEffect(() => {
     const isAllVillages = currentVillage === "All Villages";
     const selectedData = isAllVillages
-    ? mergeAnalyticsData(data)
-    : data[currentVillage];
+      ? mergeAnalyticsData(data)
+      : data[currentVillage];
     if (!selectedData) return;
-    
+
     setCategoryConfig(generateChartConfig(selectedData?.category));
     setwaterStorageConfig(
       generateChartConfig(selectedData?.mode_of_water_storage)
@@ -70,6 +74,10 @@ export default function AnalysisPage() {
       generateChartConfig(selectedData?.water_collection_type)
     );
     setcookingConfig(generateChartConfig(selectedData?.used_for_cooking));
+    if (selectedData?.sanitation_system_type)
+      setSanitationConfig(
+        generateChartConfig(selectedData?.sanitation_system_type)
+      );
     setGenderData([
       { gender: "male", value: selectedData?.male, fill: "#3b82f6" },
       {
@@ -119,6 +127,16 @@ export default function AnalysisPage() {
           return {
             category: category,
             value: selectedData?.used_for_cooking[category],
+            fill: getRandomColor(),
+          };
+        })
+      );
+    if (selectedData?.sanitation_system_type)
+      setSanitationSystemTypeData(
+        Object.keys(selectedData?.sanitation_system_type).map((category) => {
+          return {
+            category: category,
+            value: selectedData?.sanitation_system_type[category],
             fill: getRandomColor(),
           };
         })
@@ -177,6 +195,14 @@ export default function AnalysisPage() {
           <PieChartComponent
             chartConfig={cookingConfig}
             chartData={cookingData}
+            XaxisdataKey="category"
+            datakey={"value"}
+          />
+        </GraphWrapperComponent>
+        <GraphWrapperComponent title="Sanitation System Type Analysis">
+          <PieChartComponent
+            chartConfig={sanitationConfig}
+            chartData={sanitationSystemTypeData}
             XaxisdataKey="category"
             datakey={"value"}
           />

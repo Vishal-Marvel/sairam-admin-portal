@@ -28,8 +28,9 @@ const BarChartComponent = (props: BarChartComponentProps) => {
           tickLine={false}
           tickMargin={10}
           axisLine={false}
+          tickFormatter={(value) => value.slice(0, 7)+".."}
         />
-        <ChartTooltip content={<ChartTooltipContent hideLabel/>} />
+        <ChartTooltip content={<ChartTooltipContent hideIndicator/>} />
         <ChartLegend content={<ChartLegendContent />} />
         {props.datakeys.map((key) => (
           <Bar

@@ -19,9 +19,42 @@ export type AnalyticsSummary = {
   mode_of_water_storage: Record<string, number>;
   water_collection_type: Record<string, number>;
   used_for_cooking: Record<string, number>;
+  sanitation_system_type: Record<string, number>;
 };
 
 export type VillageWise = Record<string, AnalyticsSummary>;
+
+type Data = {
+  beneficiaries: number;
+  avg_awareness_level: number;
+}
+
+export type VillageWiseSchemes = Record<string, Data>
+
+export type Schemes = {
+  thozhi: VillageWiseSchemes;
+  vidiyal: VillageWiseSchemes;
+  sirpiyin: VillageWiseSchemes;
+  kaalai_unavu: VillageWiseSchemes;
+  namma_school: VillageWiseSchemes;
+  namakku_naame: VillageWiseSchemes;
+  ennum_ezhuthum: VillageWiseSchemes;
+  madi_siragugal: VillageWiseSchemes;
+  naan_mudhalvan: VillageWiseSchemes;
+  suya_unavukuzhu: VillageWiseSchemes;
+  vaanavil_manram: VillageWiseSchemes;
+  kalaignar_urimai: VillageWiseSchemes;
+  illam_thedi_kalvi: VillageWiseSchemes;
+  anaithu_grama_anna: VillageWiseSchemes;
+  muthulakshmi_reddy: VillageWiseSchemes;
+  inspector_kaappidu1: VillageWiseSchemes;
+  vaazhnthu_kaattuvom: VillageWiseSchemes;
+  makkalai_thedi_maruthuvam: VillageWiseSchemes;
+  enadu_kuppai_enadu_poruppu: VillageWiseSchemes;
+  kalaignar_orunginaindha_velai: VillageWiseSchemes;
+  mahathma_gandhi_velai_urudhi_thittam: VillageWiseSchemes;
+};
+
 
 // Define each individual block
 type StudentInfo = {
@@ -232,6 +265,7 @@ export type SurveyRecord = {
   ward_no: string;
   survey_date: Date;
   village_code: string;
+  village_name: string;
   no_of_family_members: number;
   family_info: FamilyMember[];
   piped_water_at_home: boolean;

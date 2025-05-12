@@ -18,6 +18,7 @@ export const Navigator = ({ fixed }: { fixed: boolean }) => {
     { name: "home", path: "/", isVisible: true },
     { name: "survey report", path: "/report", isVisible: token !== null },
     { name: "survey analysis", path: "/analysis", isVisible: token !== null },
+    { name: "schemes", path: "/schemes", isVisible: token !== null },
     { name: "login", path: "/login", isVisible: token == null },
     { name: "logout", path: "/logout", isVisible: token !== null },
   ];
