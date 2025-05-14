@@ -47,24 +47,27 @@ export default function SchemePage() {
       <span className="w-full uppercase text-center text-4xl font-bold text-amber-600">
         Scheme analysis
       </span>
-      <div className="flex items-center w-[90%] gap-2">
+      {/* <div className="flex items-center w-[90%] gap-2">
         <span>Get Analysis for </span>
         <SelectComponent
-          values={["All Schemes", ...Object.keys(schemeData || {}).map((key) =>
-            key.replace(/_/g, " ")
-          )]}
+          values={[
+            "All Schemes",
+            ...Object.keys(schemeData || {}).map((key) =>
+              key.replace(/_/g, " ")
+            ),
+          ]}
           onChange={(val) => {
             setCurrentScheme(val);
           }}
           value={currentScheme}
           placeholder="Select Scheme"
         />
-      </div>
+      </div> */}
       {schemeData &&
         Object.keys(schemeData).map((key) => (
           <div
             className={cn(
-              "w-[90%]",
+              "w-full flex flex-col items-center justify-center gap-5",
               key.replace(/_/g, " ") === currentScheme ||
                 currentScheme === "All Schemes"
                 ? "block"
@@ -72,7 +75,7 @@ export default function SchemePage() {
             )}
             key={key.replace(/_/g, " ")}
           >
-            <span className="capitalize font-bold text-xl">
+            <span className="capitalize font-bold text-xl self-center">
               {key.replace(/_/g, " ") + " Scheme Analysis"}
             </span>
             <div className="flex flex-wrap gap-5 justify-center">
