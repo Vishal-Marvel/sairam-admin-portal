@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
-import { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import MobileToggle from "./MobileToggle";
 import { useSession } from "@/providers/context/SessionContext";
 
@@ -13,16 +13,26 @@ interface Link {
 export const Navigator = ({ fixed }: { fixed: boolean }) => {
   const [activeLink, setActiveLink] = useState("/");
   const { token } = useSession();
+  const location = useLocation();
   // Define an array of link labels
   const links: Link[] = [
     { name: "home", path: "/", isVisible: true },
     { name: "survey report", path: "/report", isVisible: token !== null },
     { name: "survey analysis", path: "/analysis", isVisible: token !== null },
     { name: "state schemes", path: "/stateSchemes", isVisible: token !== null },
-    { name: "central schemes", path: "/centralSchemes", isVisible: token !== null },
+    {
+      name: "central schemes",
+      path: "/centralSchemes",
+      isVisible: token !== null,
+    },
     { name: "login", path: "/login", isVisible: token == null },
     { name: "logout", path: "/logout", isVisible: token !== null },
   ];
+  useEffect(() => {
+    setActiveLink(
+      links.find((link) => link.path === location.pathname)?.name || "home"
+    );
+  }, []);
 
   return (
     <div
@@ -43,7 +53,7 @@ export const Navigator = ({ fixed }: { fixed: boolean }) => {
       </Link>
       <div
         className={
-          "hidden h-full md:flex justify-end space-x-[5rem] px-5 items-center text-white"
+          "hidden h-full md:flex justify-end xl:space-x-[5rem] md:space-x-5 px-5 items-center text-white"
         }
       >
         {links
@@ -53,7 +63,6 @@ export const Navigator = ({ fixed }: { fixed: boolean }) => {
               key={link.name}
               to={link.path}
               className={({ isActive }) => {
-                setActiveLink(link.path);
                 return cn(
                   "  hover:underline uppercase",
                   isActive && "font-bold"

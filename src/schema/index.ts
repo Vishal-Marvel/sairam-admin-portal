@@ -10,26 +10,149 @@ export type Analytics = {
   villageSummary: VillageSummary[];
   problems: ProblemStatements[];
 };
+export type AvailableStatus = { available: number; not_available: number };
+type CountMap = Record<string, number>;
+type NestedCountMap = Record<string, CountMap>;
 
-export type AnalyticsSummary = {
-  male: number;
-  female: number;
-  others: number;
-  category: Record<string, number>;
-  mode_of_water_storage: Record<string, number>;
-  water_collection_type: Record<string, number>;
-  used_for_cooking: Record<string, number>;
-  sanitation_system_type: Record<string, number>;
+export type VillageAggregatedData = {
+  household_info: {
+    gender: {
+      male: number;
+      female: number;
+      others: number;
+    };
+    gram_panchayat_name: CountMap;
+    category: {
+      SC: number;
+      ST: number;
+      OBC: number;
+      General: number;
+    };
+    ration_card_type: CountMap;
+    social_status: CountMap;
+    apl_subcategory: CountMap;
+    type_of_house: CountMap;
+    annual_income: {
+      less_than_50000: number;
+      between_50000_and_100000: number;
+      between_100000_and_150000: number;
+      between_150000_and_200000: number;
+      more_than_200000: number;
+    };
+  };
+
+  migration_info: {
+    migrated_from: CountMap;
+    migration_frequency: CountMap;
+    migrated_for_work: number;
+    migration_years: number;
+  };
+
+  swachh_bharat: {
+    mode_of_water_storage: CountMap;
+    water_collection_type: CountMap;
+    sanitation_system_type: CountMap;
+    dimension_of_system: CountMap;
+    material_used: CountMap;
+    cleaning_period: CountMap;
+    black_water_discharge_location: CountMap;
+    grey_water_discharge_location: CountMap;
+    water_source: {
+      piped_water_at_home: AvailableStatus;
+      community_water_tap: AvailableStatus;
+      hand_pump: AvailableStatus;
+      open_well: AvailableStatus;
+      water_source_segregated: AvailableStatus;
+    };
+    drainage: {
+      toilet_available: AvailableStatus;
+      drainage_linked_to_house: AvailableStatus;
+      compost_pit: AvailableStatus;
+      biogas_plant: AvailableStatus;
+      have_sanitation_system: AvailableStatus;
+    };
+  };
+
+  electricity: {
+    electricity: {
+      electricity_connection: AvailableStatus;
+      lighting: AvailableStatus;
+    };
+  };
+
+  petroleum: {
+    used_for_cooking: CountMap;
+    lpg_subsidy: CountMap;
+  };
+
+  land_info: {
+    total_area_acres: number;
+    cultivable_area_acres: number;
+    irrigated_area_acres: number;
+    barren_waste_land_area_acres: number;
+    unirrigated_area_acres: number;
+    uncultivable_area_acres: number;
+  };
+
+  agricultural_inputs: {
+    usage: {
+      uses_chemical_fertilizer: AvailableStatus;
+      uses_chemical_insecticides: AvailableStatus;
+      uses_chemical_weedies: AvailableStatus;
+      uses_organic_manure: AvailableStatus;
+    };
+    chemical_fertilizer_details: CountMap;
+    chemical_insecticides_details: CountMap;
+    chemical_weedies_details: CountMap;
+    organic_manure_details: CountMap;
+    irrigation_available: CountMap;
+    irrigation_system: CountMap;
+  };
+
+  livestock: {
+    animals: {
+      cows: number;
+      buffaloes: number;
+      goats_sheep: number;
+      calves: number;
+      bullocks: number;
+      poultry_ducks: number;
+    };
+    shelter_for_livestock: CountMap;
+    avg_daily_milk_production: number;
+    animal_waste_cow_dung_kg: number;
+  };
+
+  crop_info: Record<string, { crop_area: number; crop_productivity: number }>;
+
+  family_info: {
+    age_group: {
+      less_than_20: number;
+      between_20_and_40: number;
+      between_40_and_60: number;
+      more_than_60: number;
+    };
+    marital_status: CountMap;
+    level_of_education: CountMap;
+    employment_status: CountMap;
+    cm_health_insurance_status: CountMap;
+    skill_interested_to_acquire: CountMap;
+    shg_member_status: CountMap;
+    shg_activity: CountMap;
+    nature_of_disability: CountMap;
+    physically_challenged_status: CountMap;
+    phy_challenged_id_card_status: CountMap;
+  };
 };
 
-export type VillageWise = Record<string, AnalyticsSummary>;
+export type VillageWiseAnalyticalData = Record<string, VillageAggregatedData>;
 
-export type Data = {
+export type SchemeData = {
   beneficiaries: number;
   avg_awareness_level: number;
 };
 
-export type VillageWiseSchemes = Record<string, Data>;
+export type VillageWiseSchemes = Record<string, SchemeData>;
 
 export type StateSchemes = {
   thozhi: VillageWiseSchemes;
@@ -72,6 +195,14 @@ export type CentralSchemes = {
   farmer_credit_card: VillageWiseSchemes;
   per_drop_more_crop: VillageWiseSchemes;
   soil_health_card: VillageWiseSchemes;
+};
+
+export type ChartConfig = {
+  [k in string]: {
+    label?: string;
+    color?: string;
+    fill?: string;
+  };
 };
 
 // Define each individual block

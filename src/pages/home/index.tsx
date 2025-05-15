@@ -1,11 +1,10 @@
-import BarChartComponent from "@/components/BarChartComponent";
 import { axiosInstance } from "@/lib/axiosConfig";
-import type { Analytics } from "@/schema";
+import type { Analytics, ChartConfig } from "@/schema";
 import React, { useEffect, useState } from "react";
-import { type ChartConfig } from "@/components/ui/chart";
 import GraphWrapperComponent from "@/components/GraphWrapperComponent";
 import { useLoader } from "@/hooks/use-loader";
 import Problems from "./Problems";
+import BarChartComponent from "@/components/BarChartComponent";
 
 function HomePage() {
   const [data, setdata] = useState<Analytics | null>(null);
@@ -33,7 +32,7 @@ function HomePage() {
     },
     without_aadhaar: {
       label: "Not Having Aadhaar Card",
-      color: "var(--chart-2)",
+      color: "var(--chart-3)",
     },
   } satisfies ChartConfig;
 
@@ -62,7 +61,7 @@ function HomePage() {
 
   useEffect(() => {
     if (!responseData) return;
-  
+
     setdata({
       ...responseData,
       villageSummary: responseData.villageSummary.map((village) => ({
@@ -71,7 +70,6 @@ function HomePage() {
       })),
     });
   }, [responseData]);
-  
 
   return (
     <div className="flex flex-wrap justify-center items-center gap-5 m-5">

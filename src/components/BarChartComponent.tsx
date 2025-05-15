@@ -1,96 +1,91 @@
 "use client";
-
+import { Bar } from "react-chartjs-2";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  LabelList,
-  LineChart,
-  XAxis,
-  YAxis,
-} from "recharts";
+  Chart as ChartJS,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Legend,
+} from "chart.js";
 
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartLegend,
-  ChartLegendContent,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
-import { useEffect, useRef, useState } from "react";
-import { chownSync } from "fs";
+ChartJS.register(
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Legend,
+  ChartDataLabels
+);
+
+import { ChartConfig } from "@/schema";
 
 interface BarChartComponentProps {
   chartData: any;
-  chartConfig: ChartConfig;
   XaxisdataKey: string;
   datakeys: string[];
+  chartConfig: ChartConfig;
 }
 
 const BarChartComponent = (props: BarChartComponentProps) => {
-  const [width, setWidth] = useState<number>(0);
-  const chartRef = useRef(null);
-  useEffect(() => {
-    if (!chartRef.current) return;
-
-    const observer = new ResizeObserver((entries) => {
-      for (let entry of entries) {
-        if (entry.contentRect) {
-          setWidth(entry.contentRect.width);
-        }
-      }
-    });
-
-    observer.observe(chartRef.current);
-
-    return () => {
-      if (chartRef.current) {
-        observer.unobserve(chartRef.current);
-      }
-    };
-  }, []);
   return (
-    <ChartContainer
-      ref={chartRef}
-      config={props.chartConfig}
-      className="min-h-[15rem] w-full"
-    >
-      <BarChart accessibilityLayer data={props.chartData} margin={{ top: 20 }}>
-        <CartesianGrid vertical={false} />
-        <XAxis
-          dataKey={props.XaxisdataKey}
-          tickLine={false}
-          tickMargin={10}
-          axisLine={false}
-          tickFormatter={(value: string) => {
-            console.log(width)
-            if (width < 500) {
-              return value.length > 4 ? value.slice(0, 3) + "…" : value;
-            } else if (width < 600) {
-              return value.length > 5 ? value.slice(0, 4) + "…" : value;
-            } else if (width < 700) {
-              return value.length > 6 ? value.slice(0, 6) + "…" : value;
-            }
-            return value;
-          }}
-        />
-        <YAxis tickLine={false} tickMargin={10} axisLine={false} />
-        <ChartTooltip content={<ChartTooltipContent hideIndicator />} />
-        <ChartLegend content={<ChartLegendContent />} />
-        {props.datakeys.map((key) => (
-          <Bar key={key} dataKey={key} fill={`var(--color-${key})`} radius={4}>
-            <LabelList
-              position="top"
-              offset={6}
-              className="fill-foreground"
-              fontSize={12}
-            />
-          </Bar>
-        ))}
-      </BarChart>
-      {/* <LineChart accessibilityLayer /> */}
-    </ChartContainer>
+    <div className={"h-[15rem] w-full"}>
+      <Bar
+        className={"w-full"}
+        data={{
+          labels: props.chartData?.map((data: any) => data[props.XaxisdataKey]),
+          datasets: props.datakeys.map((datakey) => ({
+            label: props.chartConfig[datakey].label,
+            data: props.chartData?.map((data: any) => data[datakey]),
+            backgroundColor: props.chartConfig[datakey].color,
+            borderColor: "red",
+            borderWidth: 1,
+            borderRadius: 5,
+          })),
+        }}
+        width={50}
+        options={{
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              grid: {
+                display: false, // 👈 removes vertical grid lines
+                offset: true,
+              },
+            },
+          },
+          layout: {
+            padding: {
+              left: 0,
+              right: 0,
+              top: 15,
+              bottom: 0,
+            },
+          },
+          plugins: {
+            legend: {
+              position: "bottom",
+              labels: {
+                padding: 10, // 👈 optional: more spacing inside legend items
+              },
+            },
+            datalabels: {
+              padding:{
+                top: -10
+              },
+              anchor: "end",
+              align: "top",
+              color: "black",
+              font: {
+                weight: "normal",
+              },
+              formatter: Math.round, // or custom formatter
+            },
+          },
+        }}
+      />
+    </div>
   );
 };
 

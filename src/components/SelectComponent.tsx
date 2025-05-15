@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/select";
 
 interface SelectComponentProps {
-  values: string[];
+  values: {label:string, value:string}[];
   onChange: (value: string) => void;
   value: string;
   placeholder: string;
@@ -24,9 +24,9 @@ const SelectComponent = (props: SelectComponentProps) => {
         <SelectValue placeholder={props.placeholder} />
       </SelectTrigger>
       <SelectContent>
-        {props.values.map((value) => (
-          <SelectItem key={value} value={value} className="capitalize">
-            {value}
+        {props.values.map((item) => (
+          <SelectItem key={item.value} value={item.value} className="capitalize">
+            {item.label}
           </SelectItem>
         ))}
       </SelectContent>

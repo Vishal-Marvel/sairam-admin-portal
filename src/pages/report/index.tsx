@@ -4,7 +4,7 @@ import { useLoader } from "@/hooks/use-loader";
 import { axiosInstance } from "@/lib/axiosConfig";
 import { SurveyRecord } from "@/schema";
 import { useEffect, useState } from "react";
-import SelectVillage from "../../components/SelectVillage";
+import SelectVillage from "../../components/SelectComponent";
 import { Download } from "lucide-react";
 import { VisibilityState } from "@tanstack/react-table";
 import { getUniqueVillageNames } from "@/lib/utils";
@@ -92,7 +92,10 @@ export default function ReportPage() {
           <div className="flex items-center gap-2">
             <span>Download Report for </span>
             <SelectVillage
-              values={["All Villages", ...getUniqueVillageNames(surveyData)]}
+              values={[
+                "All Villages",
+                ...getUniqueVillageNames(surveyData),
+              ].map((village) => ({ value: village, label: village }))}
               onChange={setCurrentVillage}
               value={currentVillage}
               placeholder="Select Village"

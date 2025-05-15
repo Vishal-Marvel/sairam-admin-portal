@@ -25,9 +25,9 @@ const ExpandedGraph = (props: ExpandedGraphProps) => {
           Expand <Expand />
         </Button>
       </DialogTrigger>
-      <DialogContent className="min-w-[60rem]">
+      <DialogContent className="md:min-w-[60rem]">
         <DialogHeader>
-          <DialogTitle>{props.title}</DialogTitle>
+          <DialogTitle className="capitalize">{props.title}</DialogTitle>
         </DialogHeader>
         {props.content}
       </DialogContent>

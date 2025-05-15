@@ -1,6 +1,6 @@
 import BarChartComponent from "@/components/BarChartComponent";
 import GraphWrapperComponent from "@/components/GraphWrapperComponent";
-import { ChartConfig } from "@/components/ui/chart";
+import { ChartConfig } from "@/schema";
 import { useLoader } from "@/hooks/use-loader";
 import { axiosInstance } from "@/lib/axiosConfig";
 import { StateSchemes } from "@/schema";
@@ -78,7 +78,7 @@ export default function StateSchemePage() {
             </span>
             <div className="flex flex-wrap gap-5 justify-center">
               <GraphWrapperComponent
-                title={key.replace(/_/g, " ") + " Scheme Beneficiaries"}
+                title={key.replace(/_/g, " ") + " - Beneficiaries"}
               >
                 <BarChartComponent
                   chartConfig={beneficiariesConfig}
@@ -91,7 +91,7 @@ export default function StateSchemePage() {
                 />
               </GraphWrapperComponent>
               <GraphWrapperComponent
-                title={key.replace(/_/g, " ") + " Scheme Avg Awareness level"}
+                title={key.replace(/_/g, " ") + " - Avg Awareness level"}
               >
                 <BarChartComponent
                   chartConfig={analysisConfig}
