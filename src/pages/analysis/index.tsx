@@ -41,7 +41,7 @@ export default function AnalysisPage() {
       startLoad();
       const response = await axiosInstance.get("/analytics/villagewise");
       setdata(response.data.villageSummary);
-      console.log(response.data);
+      // console.log(response.data);
     } catch (err) {
       console.log(err);
     } finally {
@@ -168,7 +168,7 @@ export default function AnalysisPage() {
             datakey={"value"}
           />
         </GraphWrapperComponent>
-        <GraphWrapperComponent title="Category Analysis">
+        {/* <GraphWrapperComponent title="Category Analysis">
           <PieChartComponent
             chartConfig={categoryConfig}
             chartData={categoryData}
@@ -207,7 +207,7 @@ export default function AnalysisPage() {
             XaxisdataKey="category"
             datakey={"value"}
           />
-        </GraphWrapperComponent>
+        </GraphWrapperComponent> */}
       </div>
     </div>
   );

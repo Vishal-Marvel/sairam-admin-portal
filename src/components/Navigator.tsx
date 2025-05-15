@@ -18,7 +18,8 @@ export const Navigator = ({ fixed }: { fixed: boolean }) => {
     { name: "home", path: "/", isVisible: true },
     { name: "survey report", path: "/report", isVisible: token !== null },
     { name: "survey analysis", path: "/analysis", isVisible: token !== null },
-    { name: "schemes", path: "/schemes", isVisible: token !== null },
+    { name: "state schemes", path: "/stateSchemes", isVisible: token !== null },
+    { name: "central schemes", path: "/centralSchemes", isVisible: token !== null },
     { name: "login", path: "/login", isVisible: token == null },
     { name: "logout", path: "/logout", isVisible: token !== null },
   ];
@@ -42,7 +43,7 @@ export const Navigator = ({ fixed }: { fixed: boolean }) => {
       </Link>
       <div
         className={
-          "hidden md:flex justify-end space-x-[5rem] px-5 items-center text-white"
+          "hidden h-full md:flex justify-end space-x-[5rem] px-5 items-center text-white"
         }
       >
         {links

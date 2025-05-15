@@ -3,21 +3,19 @@ import GraphWrapperComponent from "@/components/GraphWrapperComponent";
 import { ChartConfig } from "@/components/ui/chart";
 import { useLoader } from "@/hooks/use-loader";
 import { axiosInstance } from "@/lib/axiosConfig";
-import { Schemes } from "@/schema";
-import React, { useEffect, useState } from "react";
-import SelectComponent from "@/components/SelectVillage";
-import { Schema } from "zod";
+import { CentralSchemes } from "@/schema";
+import { useEffect, useState } from "react";
 import { cn, generateData } from "@/lib/utils";
 
-export default function SchemePage() {
-  const [schemeData, setSchemeData] = useState<Schemes>();
+export default function CentralSchemePage() {
+  const [schemeData, setSchemeData] = useState<CentralSchemes>();
   const { startLoad, stopLoad } = useLoader();
   const [currentScheme, setCurrentScheme] = useState<string>("All Schemes");
 
   const getData = async () => {
     try {
       startLoad();
-      const response = await axiosInstance.get("/analytics/schemes");
+      const response = await axiosInstance.get("/analytics/centralSchemes");
       setSchemeData(response.data);
     } catch (err) {
       console.log(err);
@@ -31,14 +29,14 @@ export default function SchemePage() {
 
   const beneficiariesConfig = {
     count: {
-      label: "Count",
+      label: "Beneficiaries",
       color: "var(--chart-4)",
     },
   } satisfies ChartConfig;
 
   const analysisConfig = {
     count: {
-      label: "Count",
+      label: "Average Awareness Level",
       color: "var(--chart-5)",
     },
   } satisfies ChartConfig;
@@ -80,12 +78,12 @@ export default function SchemePage() {
             </span>
             <div className="flex flex-wrap gap-5 justify-center">
               <GraphWrapperComponent
-                title={key.replace(/_/g, " ") + " Scheme Benefeciaries"}
+                title={key.replace(/_/g, " ") + " Scheme Beneficiaries"}
               >
                 <BarChartComponent
                   chartConfig={beneficiariesConfig}
                   chartData={generateData(
-                    schemeData?.[key as keyof Schemes],
+                    schemeData?.[key as keyof CentralSchemes],
                     "beneficiaries"
                   )}
                   XaxisdataKey="village_name"
@@ -98,7 +96,7 @@ export default function SchemePage() {
                 <BarChartComponent
                   chartConfig={analysisConfig}
                   chartData={generateData(
-                    schemeData?.[key as keyof Schemes],
+                    schemeData?.[key as keyof CentralSchemes],
                     "avg_awareness_level"
                   )}
                   XaxisdataKey="village_name"

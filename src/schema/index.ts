@@ -27,11 +27,11 @@ export type VillageWise = Record<string, AnalyticsSummary>;
 export type Data = {
   beneficiaries: number;
   avg_awareness_level: number;
-}
+};
 
-export type VillageWiseSchemes = Record<string, Data>
+export type VillageWiseSchemes = Record<string, Data>;
 
-export type Schemes = {
+export type StateSchemes = {
   thozhi: VillageWiseSchemes;
   vidiyal: VillageWiseSchemes;
   sirpiyin: VillageWiseSchemes;
@@ -55,6 +55,24 @@ export type Schemes = {
   mahathma_gandhi_velai_urudhi_thittam: VillageWiseSchemes;
 };
 
+export type CentralSchemes = {
+  financial_inclusion: VillageWiseSchemes;
+  child_benefit: VillageWiseSchemes;
+  mudra: VillageWiseSchemes;
+  jeevan_jyoti: VillageWiseSchemes;
+  suraksha_insurance: VillageWiseSchemes;
+  old_age_pension: VillageWiseSchemes;
+  skill_development: VillageWiseSchemes;
+  janani_suraksha: VillageWiseSchemes;
+  atal_mission: VillageWiseSchemes;
+  meal_for_school: VillageWiseSchemes;
+  health_checkup: VillageWiseSchemes;
+  affordable_housing: VillageWiseSchemes;
+  crop_insurance: VillageWiseSchemes;
+  farmer_credit_card: VillageWiseSchemes;
+  per_drop_more_crop: VillageWiseSchemes;
+  soil_health_card: VillageWiseSchemes;
+};
 
 // Define each individual block
 type StudentInfo = {

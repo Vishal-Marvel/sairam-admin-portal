@@ -38,7 +38,6 @@ const BarChartComponent = (props: BarChartComponentProps) => {
       for (let entry of entries) {
         if (entry.contentRect) {
           setWidth(entry.contentRect.width);
-          console.log(entry.contentRect.width);
         }
       }
     });
@@ -64,12 +63,16 @@ const BarChartComponent = (props: BarChartComponentProps) => {
           tickLine={false}
           tickMargin={10}
           axisLine={false}
-          tickFormatter={(value) => {
-            console.log(width, width < 600 && value.length > 6
-             );
-            return width < 600 && value.length > 6
-              ? value.slice(0, 6) + "…"
-              : value;
+          tickFormatter={(value: string) => {
+            console.log(width)
+            if (width < 500) {
+              return value.length > 4 ? value.slice(0, 3) + "…" : value;
+            } else if (width < 600) {
+              return value.length > 5 ? value.slice(0, 4) + "…" : value;
+            } else if (width < 700) {
+              return value.length > 6 ? value.slice(0, 6) + "…" : value;
+            }
+            return value;
           }}
         />
         <YAxis tickLine={false} tickMargin={10} axisLine={false} />
