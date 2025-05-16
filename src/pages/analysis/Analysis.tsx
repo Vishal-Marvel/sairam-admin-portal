@@ -1,4 +1,7 @@
 import BarChartComponent from "@/components/BarChartComponent";
+import CombinedChartComponent, {
+  CombinedChartConfig,
+} from "@/components/CombinedChartComponent";
 import GraphWrapperComponent from "@/components/GraphWrapperComponent";
 import PieChartComponent from "@/components/PieChart";
 import { capitalize, generateChartConfig, getRandomColor } from "@/lib/utils";
@@ -36,6 +39,41 @@ function transformItem<Data extends Record<string, any>>(
   };
 }
 const Analysis = ({ data, fullData, village, dataset }: AnalysisProps) => {
+  if (dataset == "crop_info") {
+    console.log(data)
+    const chartData = Object.entries(data).map(([crop, values]) => ({
+      category: capitalize(crop),
+      area: values.crop_area,
+      productivity: values.crop_productivity,
+    }));
+
+    const chartConfig = {
+      area: {
+        label: "Area (acres)",
+        color: "rgba(75, 192, 192, 0.6)",
+        type: "bar",
+        yAxisID: "y",
+        order: 1,
+      },
+      productivity: {
+        label: "Productivity (tons/acre)",
+        color: "rgba(255, 99, 132, 1)",
+        type: "line",
+        yAxisID: "y1",
+        order:2,
+      },
+    } satisfies CombinedChartConfig;
+    return (
+      <GraphWrapperComponent title="Area vs Productivity" width="md:w-[50rem]">
+        <CombinedChartComponent
+          chartData={chartData}
+          datakeys={["area", "productivity"]}
+          chartConfig={chartConfig}
+          XaxisdataKey="category"
+        />
+      </GraphWrapperComponent>
+    );
+  }
   return (
     <>
       {Object.keys(data).map((key) => {
@@ -99,7 +137,9 @@ const Analysis = ({ data, fullData, village, dataset }: AnalysisProps) => {
             width={graph ? "w-[25rem]" : "w-[35rem]"}
           >
             {!hasData ? (
-              <div className="grid place-content-center text-center text-gray-500 h-[15rem]">No Data Available</div>
+              <div className="grid place-content-center text-center text-gray-500 h-[15rem]">
+                No Data Available
+              </div>
             ) : graph ? (
               <PieChartComponent
                 chartData={chartData}

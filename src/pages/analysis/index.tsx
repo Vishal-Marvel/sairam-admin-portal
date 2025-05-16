@@ -23,7 +23,7 @@ export default function AnalysisPage() {
     { label: "Land Info", value: "land_info" },
     { label: "Agricultural Inputs", value: "agricultural_inputs" },
     { label: "Livestock", value: "livestock" },
-    // { label: "Crop Info", value: "crop_info" },
+    { label: "Crop Info", value: "crop_info" },
     { label: "Family Info", value: "family_info" },
   ]);
 
@@ -58,7 +58,7 @@ export default function AnalysisPage() {
         { label: "Land Info", value: "land_info" },
         { label: "Agricultural Inputs", value: "agricultural_inputs" },
         { label: "Livestock", value: "livestock" },
-        // { label: "Crop Info", value: "crop_info" },
+        { label: "Crop Info", value: "crop_info" },
         { label: "Family Info", value: "family_info" },
       ]);
     }
