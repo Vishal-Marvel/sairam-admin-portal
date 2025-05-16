@@ -4,7 +4,7 @@ import CombinedChartComponent, {
 } from "@/components/CombinedChartComponent";
 import GraphWrapperComponent from "@/components/GraphWrapperComponent";
 import PieChartComponent from "@/components/PieChart";
-import { capitalize, generateChartConfig, getRandomColor } from "@/lib/utils";
+import { capitalize, generateChartConfig, getRandomColor, transformItem } from "@/lib/utils";
 import {
   VillageAggregatedData,
   AvailableStatus,
@@ -15,32 +15,14 @@ type Data = VillageAggregatedData[keyof VillageAggregatedData];
 interface AnalysisProps {
   data: Data;
   fullData: VillageWiseAnalyticalData;
-  village: string;
+  village: string[];
   dataset: string;
 }
 
-function transformItem<Data extends Record<string, any>>(
-  key: keyof Data,
-  item: string,
-  data: Data
-) {
-  const status: AvailableStatus = data[key][item];
 
-  let value;
-  if (Object.keys(data[key][item] ?? {}).length == 0)
-    value = { value: data[key][item] };
-  else value = { ...status };
-
-  return {
-    category: capitalize(item.replace(/_/g, " ")),
-    ...value,
-    fill: getRandomColor(),
-    color: getRandomColor(),
-  };
-}
 const Analysis = ({ data, fullData, village, dataset }: AnalysisProps) => {
   if (dataset == "crop_info") {
-    console.log(data)
+    console.log(data);
     const chartData = Object.entries(data).map(([crop, values]) => ({
       category: capitalize(crop),
       area: values.crop_area,
@@ -60,7 +42,7 @@ const Analysis = ({ data, fullData, village, dataset }: AnalysisProps) => {
         color: "rgba(255, 99, 132, 1)",
         type: "line",
         yAxisID: "y1",
-        order:2,
+        order: 2,
       },
     } satisfies CombinedChartConfig;
     return (
@@ -84,7 +66,7 @@ const Analysis = ({ data, fullData, village, dataset }: AnalysisProps) => {
 
         const graph =
           chartData.length > 0 &&
-          chartData.length < 4 &&
+          chartData.length <= 4 &&
           chartData.some((item) =>
             Object.prototype.hasOwnProperty.call(item, "value")
           );
@@ -102,8 +84,8 @@ const Analysis = ({ data, fullData, village, dataset }: AnalysisProps) => {
                   ))
             )
           );
-        if (!hasData && village === "All Villages") {
-          chartData = Object.keys(fullData)
+        if (!hasData && village.length != 1) {
+          chartData = (village.length > 1 ? village : Object.keys(fullData))
             .map((villageName) => {
               const record = fullData[villageName];
               const value =

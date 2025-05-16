@@ -9,10 +9,10 @@ export type VillageSummary = {
 export type Analytics = {
   villageSummary: VillageSummary[];
   problems: ProblemStatements[];
+  surveyCountByDate: CountMap
 };
 export type AvailableStatus = { available: number; not_available: number };
 type CountMap = Record<string, number>;
-type NestedCountMap = Record<string, CountMap>;
 
 export type VillageAggregatedData = {
   household_info: {

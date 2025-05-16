@@ -20,7 +20,7 @@ interface GraphWrapperComponentProps {
 const GraphWrapperComponent = (props: GraphWrapperComponentProps) => {
   const [open, setOpen] = useState(false);
   return (
-    <Card className={cn(" m-3", props.width || "w-[35rem]")}>
+    <Card className={cn(" m-3", "min-w-fit", props.width || "min-w-[10rem]")}>
       <CardHeader>
         <CardTitle className="flex justify-between items-center">
           <span className="capitalize">{props.title}</span>

@@ -29,62 +29,68 @@ interface BarChartComponentProps {
 }
 
 const BarChartComponent = (props: BarChartComponentProps) => {
+    const barWidth = Math.max(props.chartData?.length * 5, 35); // 50px per bar, with minimum fallback
+
   return (
-    <div className={"h-[15rem] w-full"}>
-      <Bar
-        className={"w-full"}
-        data={{
-          labels: props.chartData?.map((data: any) => data[props.XaxisdataKey]),
-          datasets: props.datakeys.map((datakey) => ({
-            label: props.chartConfig[datakey].label,
-            data: props.chartData?.map((data: any) => data[datakey]),
-            backgroundColor: props.chartConfig[datakey].color,
-            borderColor: "red",
-            borderWidth: 1,
-            borderRadius: 5,
-          })),
-        }}
-        width={50}
-        options={{
-          maintainAspectRatio: false,
-          scales: {
-            x: {
-              grid: {
-                display: false, // 👈 removes vertical grid lines
-                offset: true,
+    <div className="w-full">
+      <div style={{ width: `${barWidth}rem`, height: "15rem" }}>
+        <Bar
+          className={"w-full"}
+          data={{
+            labels: props.chartData?.map(
+              (data: any) => data[props.XaxisdataKey]
+            ),
+            datasets: props.datakeys.map((datakey) => ({
+              label: props.chartConfig[datakey].label,
+              data: props.chartData?.map((data: any) => data[datakey]),
+              backgroundColor: props.chartConfig[datakey].color,
+              borderColor: "red",
+              borderWidth: 1,
+              borderRadius: 5,
+            })),
+          }}
+          width={50}
+          options={{
+            maintainAspectRatio: false,
+            scales: {
+              x: {
+                grid: {
+                  display: false, // 👈 removes vertical grid lines
+                  offset: true,
+                },
               },
             },
-          },
-          layout: {
-            padding: {
-              left: 0,
-              right: 0,
-              top: 15,
-              bottom: 0,
-            },
-          },
-          plugins: {
-            legend: {
-              position: "bottom",
-              labels: {
-                padding: 10, // 👈 optional: more spacing inside legend items
+            layout: {
+              padding: {
+                left: 0,
+                right: 0,
+                top: 15,
+                bottom: 0,
               },
             },
-            datalabels: {
-              padding:{
-                top: -10
+            plugins: {
+              legend: {
+                position: "bottom",
+                labels: {
+                  padding: 10, // 👈 optional: more spacing inside legend items
+                },
               },
-              anchor: "end",
-              align: "top",
-              color: "black",
-              font: {
-                weight: "normal",
+              datalabels: {
+                padding: {
+                  top: -10,
+                },
+                anchor: "end",
+                align: "top",
+                color: "black",
+                font: {
+                  weight: "normal",
+                },
+                formatter: Math.round, // or custom formatter
               },
-              formatter: Math.round, // or custom formatter
             },
-          },
-        }}
-      />
+          }}
+        />
+      </div>
     </div>
   );
 };

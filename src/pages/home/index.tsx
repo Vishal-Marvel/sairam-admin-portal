@@ -5,6 +5,7 @@ import GraphWrapperComponent from "@/components/GraphWrapperComponent";
 import { useLoader } from "@/hooks/use-loader";
 import Problems from "./Problems";
 import BarChartComponent from "@/components/BarChartComponent";
+import { generateChartConfig, transformItem } from "@/lib/utils";
 
 function HomePage() {
   const [data, setdata] = useState<Analytics | null>(null);
@@ -28,11 +29,11 @@ function HomePage() {
   const aadhaarChatConfig = {
     with_aadhaar: {
       label: "Having Aadhaar Card",
-      color: "var(--chart-1)",
+      color: "#8bb216",
     },
     without_aadhaar: {
       label: "Not Having Aadhaar Card",
-      color: "var(--chart-3)",
+      color: "#3b82f6",
     },
   } satisfies ChartConfig;
 
@@ -42,6 +43,14 @@ function HomePage() {
       color: "#3b82f6",
     },
   } satisfies ChartConfig;
+
+  const surveyDateConfig = {
+    total_surveys: {
+      label: "Survey Date",
+      color: "#3b82f6",
+    },
+  } satisfies ChartConfig;
+
   const familyMembersConfig = {
     total_members: {
       label: "Family Members Count",
@@ -105,7 +114,17 @@ function HomePage() {
           chartConfig={rationCardConfig}
           chartData={data?.villageSummary}
           XaxisdataKey="village_name"
-          datakeys={["without_ration", "total_surveys"]}
+          datakeys={["total_surveys", "without_ration"]}
+        />
+      </GraphWrapperComponent>
+      <GraphWrapperComponent title="Date Wise Analysis">
+        <BarChartComponent
+          chartConfig={generateChartConfig(data?.surveyCountByDate ?? {})}
+          chartData={Object.keys(data?.surveyCountByDate ?? {}).map((key) => {
+            return { category: key, value: data?.surveyCountByDate[key] };
+          })}
+          XaxisdataKey="category"
+          datakeys={["value"]}
         />
       </GraphWrapperComponent>
       {/* <div className="w-[90%]">

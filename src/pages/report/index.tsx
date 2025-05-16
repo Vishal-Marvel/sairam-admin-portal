@@ -50,7 +50,7 @@ export default function ReportPage() {
   }, [surveyData]);
 
   const visibleColumns: VisibilityState = {
-    village_name: false,
+    village_name: true,
   };
 
   const downloadData = async () => {

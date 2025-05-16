@@ -27,6 +27,19 @@ export const surveyColumns: ColumnDef<SurveyRecord>[] = [
     ),
   },
   {
+    accessorKey: "village_name",
+    id: "village_name",
+    header: () => <div className="text-center font-medium">Village Name</div>,
+    cell: ({ row }) => (
+      <div className="text-center font-medium">
+        {row.getValue("village_name")}
+      </div>
+    ),
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
+    },
+  },
+  {
     accessorKey: "gram_panchayat_name",
     id: "gram_panchayat_name",
     header: () => (
@@ -41,19 +54,7 @@ export const surveyColumns: ColumnDef<SurveyRecord>[] = [
       return value.includes(row.getValue(id));
     },
   },
-  {
-    accessorKey: "village_name",
-    id: "village_name",
-    header: () => <div className="text-center font-medium">Village Name</div>,
-    cell: ({ row }) => (
-      <div className="text-center font-medium">
-        {row.getValue("village_name")}
-      </div>
-    ),
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
-    },
-  },
+
   // {
   //   accessorKey: "no_of_family_members",
   //   id: "no_of_family_members",

@@ -8,11 +8,15 @@ import { axiosInstance } from "@/lib/axiosConfig";
 import React, { useEffect, useState } from "react";
 import SelectComponent from "@/components/SelectComponent";
 import Analysis from "./Analysis";
+import { MultipleSelect } from "@/components/MultipleSelect";
+import { mergeVillageAggregatedDataArray } from "@/lib/utils";
 
 export default function AnalysisPage() {
   const [data, setdata] = useState<VillageWiseAnalyticalData>({});
+
   const { startLoad, stopLoad } = useLoader();
-  const [currentVillage, setCurrentVillage] = useState<string>("All Villages");
+  const [currentVillage, setCurrentVillage] = useState<string[]>([]);
+  const [currentData, setCurrentData] = useState<VillageAggregatedData>();
 
   const [dataList, setDataList] = useState([
     { label: "Household Info", value: "household_info" },
@@ -46,7 +50,7 @@ export default function AnalysisPage() {
   }, []);
 
   useEffect(() => {
-    if (currentVillage != "All Villages") {
+    if (currentVillage.length == 1) {
       setDataList((prev) => prev.filter((d) => d.value != "land_info"));
     } else {
       setDataList([
@@ -65,17 +69,19 @@ export default function AnalysisPage() {
   }, [currentVillage]);
 
   useEffect(() => {
-    if (currentVillage != "All Villages" && currentDataset == "land_info") {
+    if (currentVillage.length == 0) {
+      setCurrentData(data["All Villages"]);
+      
+    } else {
+      setCurrentData(mergeVillageAggregatedDataArray(currentVillage, data));
+    }
+  }, [currentVillage, data]);
+
+  useEffect(() => {
+    if (currentVillage.length == 1 && currentDataset == "land_info") {
       setCurrentDataset("household_info");
     }
   }, [currentDataset, currentVillage]);
-
-  const genderConfig = {
-    value: { label: "Count" },
-    male: { label: "Male" },
-    female: { label: "Female" },
-    others: { label: "Others" },
-  } satisfies ChartConfig;
 
   return (
     <div className="flex flex-col justify-center items-center gap-5 m-5">
@@ -85,13 +91,15 @@ export default function AnalysisPage() {
       <div className="flex md:px-10 gap-2 w-full">
         <div className="flex items-center gap-2">
           <span>Get Report for </span>
-          <SelectComponent
-            values={Object.keys(data).map((village) => {
-              return { label: village, value: village };
-            })}
-            onChange={(value) => setCurrentVillage(value)}
-            value={currentVillage}
-            placeholder="Select Village"
+          <MultipleSelect
+            options={Object.keys(data)
+              .filter((village) => village !== "All Villages")
+              .map((village) => {
+                return { label: village, value: village };
+              })}
+            onSelect={(value) => setCurrentVillage(value)}
+            selectedValues={new Set(currentVillage)}
+            title="Select Village"
           />
           <SelectComponent
             values={dataList}
@@ -102,20 +110,13 @@ export default function AnalysisPage() {
         </div>
       </div>
       <div className="flex flex-wrap justify-center items-center gap-5">
-        {currentDataset &&
-          currentVillage &&
-          data[currentVillage]?.[
-            currentDataset as keyof VillageAggregatedData
-          ] && (
+        {currentData &&
+          currentData[currentDataset as keyof VillageAggregatedData] && (
             <Analysis
               fullData={data}
               village={currentVillage}
               dataset={currentDataset}
-              data={
-                data[currentVillage][
-                  currentDataset as keyof VillageAggregatedData
-                ]
-              }
+              data={currentData[currentDataset as keyof VillageAggregatedData]}
             />
           )}
       </div>
