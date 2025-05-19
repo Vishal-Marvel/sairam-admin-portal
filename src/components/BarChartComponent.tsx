@@ -85,7 +85,7 @@ const BarChartComponent = (props: BarChartComponentProps) => {
                 font: {
                   weight: "normal",
                 },
-                formatter: Math.round, // or custom formatter
+                // formatter: Math.round, // or custom formatter
               },
             },
           }}

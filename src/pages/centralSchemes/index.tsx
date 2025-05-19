@@ -30,14 +30,14 @@ export default function CentralSchemePage() {
   const beneficiariesConfig = {
     count: {
       label: "Beneficiaries",
-      color: "var(--chart-4)",
+      color: "#666666",
     },
   } satisfies ChartConfig;
 
   const analysisConfig = {
     count: {
       label: "Average Awareness Level",
-      color: "var(--chart-5)",
+      color: "#66b666",
     },
   } satisfies ChartConfig;
   return (
