@@ -1,18 +1,68 @@
 import { axiosInstance } from "@/lib/axiosConfig";
-import type { Analytics, ChartConfig } from "@/schema";
+import type { Analytics, ChartConfig, NestedCoutMap } from "@/schema";
 import React, { useEffect, useState } from "react";
 import GraphWrapperComponent from "@/components/GraphWrapperComponent";
 import { useLoader } from "@/hooks/use-loader";
 import Problems from "./Problems";
 import BarChartComponent from "@/components/BarChartComponent";
-import { generateChartConfig, transformItem } from "@/lib/utils";
+import {
+  generateChartConfig,
+  generateChartConfigForVillage,
+  getChartDataForDateRange,
+  transformItem,
+} from "@/lib/utils";
 import StackedBarChartComponent from "@/components/StackedBarChartComponent";
+import SelectComponent from "@/components/SelectComponent";
+const aadhaarChatConfig = {
+  with_aadhaar: {
+    label: "Having Aadhaar Card",
+    color: "#8bb216",
+  },
+  without_aadhaar: {
+    label: "Not Having Aadhaar Card",
+    color: "#3b82f6",
+  },
+} satisfies ChartConfig;
+
+const surveyConfig = {
+  total_surveys: {
+    label: "Survey Count",
+    color: "#3b82f6",
+  },
+} satisfies ChartConfig;
+
+const familyMembersConfig = {
+  total_members: {
+    label: "Family Members Count",
+    color: "#8bb216",
+  },
+} satisfies ChartConfig;
+const rationCardConfig = {
+  without_ration: {
+    label: "Without Ration Card",
+    color: "#dbb256",
+  },
+  total_surveys: {
+    label: "Total House Hold",
+    color: "#3b82f6",
+  },
+} satisfies ChartConfig;
+
+const dateRangeSelectorList = [
+  { label: "Last Week", value: "last_week" },
+  { label: "Last Month", value: "last_month" },
+  { label: "Last Quarter", value: "last_quarter" },
+  { label: "Last Year", value: "last_year" },
+];
 
 function HomePage() {
   const [data, setdata] = useState<Analytics | null>(null);
   const [responseData, setResponseData] = useState<Analytics>();
-  const [chartDataForDate, setChartDataForDate] = useState<any[]>([]);
   const [dataKeysForDate, setDataKeysForDate] = useState<string[]>([]);
+  const [chartDataForDate, setChartDataForDate] = useState<any[]>([]);
+  const [chartConfigForDate, setChartConfigForDate] = useState<ChartConfig>({});
+  const [selectedDateRange, setSelectedDateRange] =
+    useState<string>("last_week");
   const { startLoad, stopLoad } = useLoader();
   const getData = async () => {
     try {
@@ -29,48 +79,6 @@ function HomePage() {
     getData();
   }, []);
 
-  const aadhaarChatConfig = {
-    with_aadhaar: {
-      label: "Having Aadhaar Card",
-      color: "#8bb216",
-    },
-    without_aadhaar: {
-      label: "Not Having Aadhaar Card",
-      color: "#3b82f6",
-    },
-  } satisfies ChartConfig;
-
-  const surveyConfig = {
-    total_surveys: {
-      label: "Survey Count",
-      color: "#3b82f6",
-    },
-  } satisfies ChartConfig;
-
-  const surveyDateConfig = {
-    total_surveys: {
-      label: "Survey Date",
-      color: "#3b82f6",
-    },
-  } satisfies ChartConfig;
-
-  const familyMembersConfig = {
-    total_members: {
-      label: "Family Members Count",
-      color: "#8bb216",
-    },
-  } satisfies ChartConfig;
-  const rationCardConfig = {
-    without_ration: {
-      label: "Without Ration Card",
-      color: "#dbb256",
-    },
-    total_surveys: {
-      label: "Total House Hold",
-      color: "#3b82f6",
-    },
-  } satisfies ChartConfig;
-
   useEffect(() => {
     if (!responseData) return;
 
@@ -82,37 +90,49 @@ function HomePage() {
       })),
     });
   }, [responseData]);
-
   useEffect(() => {
     if (!data) return;
-    const dates = Object.keys(data?.surveyCountByDate);
-    const allVillages = new Set<string>();
-
-    dates.forEach((date) => {
-      Object.keys(data?.surveyCountByDate[date]).forEach((village) =>
-        allVillages.add(village)
-      );
-    });
-
-    setDataKeysForDate(Array.from(allVillages));
-
-    setChartDataForDate(
-      dates.map((date) => {
-        const entry: any = { category: date };
-        dataKeysForDate.forEach((village) => {
-          if (data?.surveyCountByDate[date][village])
-            entry[village] = data?.surveyCountByDate[date][village];
-        });
-        return entry;
-      })
+    setChartConfigForDate(
+      generateChartConfigForVillage(
+        data.villageSummary.map((summary) => summary.village_name)
+      )
     );
   }, [data]);
+
+  useEffect(() => {
+    if (!data?.surveyCountByDate) return;
+    const { dataKeys, chartData } = getChartDataForDateRange(
+      data.surveyCountByDate,
+      selectedDateRange
+    );
+    setDataKeysForDate(dataKeys);
+    setChartDataForDate(chartData);
+  }, [data, selectedDateRange]);
 
   return (
     <div className="flex flex-wrap justify-center items-center gap-5 m-5">
       <span className="w-full uppercase text-center text-4xl font-bold text-amber-600">
         overall survey analysis
       </span>
+      <GraphWrapperComponent
+        title="Date Wise Survey Analysis"
+        width="md:w-[55rem] w-full"
+      >
+        <div className="flex flex-col items-end">
+          <SelectComponent
+            values={dateRangeSelectorList}
+            placeholder="Select Date Range"
+            value={selectedDateRange}
+            onChange={(value) => setSelectedDateRange(value)}
+          />
+          <StackedBarChartComponent
+            chartConfig={chartConfigForDate}
+            chartData={chartDataForDate}
+            XaxisdataKey="category"
+            datakeys={dataKeysForDate}
+          />
+        </div>
+      </GraphWrapperComponent>
       <GraphWrapperComponent title="Village wise Survey count">
         <BarChartComponent
           chartConfig={surveyConfig}
@@ -145,14 +165,7 @@ function HomePage() {
           datakeys={["total_surveys", "without_ration"]}
         />
       </GraphWrapperComponent>
-      <GraphWrapperComponent title="Date Wise Analysis">
-        <StackedBarChartComponent
-          chartConfig={generateChartConfig(chartDataForDate[0]?? {})}
-          chartData={chartDataForDate}
-          XaxisdataKey="category"
-          datakeys={dataKeysForDate}
-        />
-      </GraphWrapperComponent>
+      
       {/* <div className="w-[90%]">
         <Problems problems={data?.problems ?? []} />
       </div> */}

@@ -13,7 +13,7 @@ export type Analytics = {
 };
 export type AvailableStatus = { available: number; not_available: number };
 type CountMap = Record<string, number>;
-type NestedCoutMap = Record<string, CountMap>;
+export type NestedCoutMap = Record<string, CountMap>;
 
 export type VillageAggregatedData = {
   household_info: {

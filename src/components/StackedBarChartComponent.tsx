@@ -30,7 +30,7 @@ interface StackedBarChartComponentProps {
 
 const StackedBarChartComponent = (props: StackedBarChartComponentProps) => {
   return (
-    <div className="w-full h-[15rem] overflow-x-auto">
+    <div className="w-full h-[20rem] overflow-x-auto">
       {/* <div style={{ width: `${Math.max(props.chartData?.length * 5, 35)}rem`, height: "15rem" }}> */}
       <Bar
         className="w-full"
@@ -69,12 +69,11 @@ const StackedBarChartComponent = (props: StackedBarChartComponentProps) => {
               labels: { padding: 10 },
             },
             datalabels: {
-              display: false,
-              anchor: "end",
-              align: "top",
+              display: true,
+              anchor: "center",
+              align: "center",
               color: "black",
-              font: { weight: "normal" },
-              formatter: Math.round,
+              font: { weight: "bold" },
             },
           },
         }}

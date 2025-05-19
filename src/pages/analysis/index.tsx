@@ -90,7 +90,7 @@ export default function AnalysisPage() {
       </span>
       <div className="flex md:px-10 gap-2 w-full">
         <div className="flex items-center gap-2">
-          <span>Get Report for </span>
+          <span>Get Analysis for </span>
           <MultipleSelect
             options={Object.keys(data)
               .filter((village) => village !== "All Villages")

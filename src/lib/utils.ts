@@ -1,5 +1,6 @@
 import {
   AvailableStatus,
+  NestedCoutMap,
   SchemeData,
   SurveyRecord,
   VillageAggregatedData,
@@ -29,13 +30,34 @@ export function generateChartConfig(data: Record<string, number>): ChartConfig {
     },
   };
 
-  for (const key of Object.keys(data)) {
+  Object.keys(data).map((key, index) => {
     config[key] = {
       label: capitalize(key),
-      fill: getRandomColor(),
-      color: getRandomColor(),
+      fill: getRandomColor(index),
+      color: getRandomColor(index),
     };
-  }
+  });
+
+  return config;
+}
+
+export function generateChartConfigForVillage(data: string[]): ChartConfig {
+  const config: ChartConfig = {
+    value: { label: "Count", color: getRandomColor() },
+    available: { label: "Available", color: "#00ff00" },
+    not_available: {
+      label: "Not Available",
+      color: "#ffaa00",
+    },
+  };
+
+  data.map((key, index) => {
+    config[key] = {
+      label: capitalize(key),
+      fill: getRandomColor(index),
+      color: getRandomColor(index),
+    };
+  });
 
   return config;
 }
@@ -45,7 +67,7 @@ export function capitalize(text: string): string {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
-export function getRandomColor(): string {
+export function getRandomColor(index?: number): string {
   const colorPalette = [
     "#4BC0C0",
     "#FF9F40",
@@ -58,8 +80,8 @@ export function getRandomColor(): string {
     "#F8B195",
     "#355C7D",
   ];
-  const index = Math.floor(Math.random() * 10); // Full hue range
-  return colorPalette[index]; // Saturation and lightness fixed for readability
+  const Ranindex = Math.floor(Math.random() * 10); // Full hue range
+  return colorPalette[index || Ranindex]; // Saturation and lightness fixed for readability
 }
 
 export function getUniqueVillageNames(data: SurveyRecord[]): string[] {
@@ -156,4 +178,123 @@ function mergeCountMaps<T extends Record<string, number>>(a: T, b: T): T {
     result[key] = (result[key] || 0) + b[key];
   }
   return result as T;
+}
+
+export function getChartDataForDateRange(
+  inputData: NestedCoutMap,
+  selectedDateRange: string
+) {
+  const now = new Date();
+  const allVillages = new Set<string>();
+
+  // Get all dates in inputData and sort them
+  const allDates = Object.keys(inputData)
+    .map((dateStr) => new Date(dateStr))
+    .sort((a, b) => a.getTime() - b.getTime());
+
+  // Define start date based on selected range
+  const getStartDate = (range: string) => {
+    const date = new Date(now);
+    switch (range) {
+      case "last_week":
+        date.setDate(date.getDate() - 7);
+        break;
+      case "last_month":
+        date.setMonth(date.getMonth() - 1);
+        break;
+      case "last_quarter":
+        date.setMonth(date.getMonth() - 3);
+        break;
+      case "last_year":
+        date.setFullYear(date.getFullYear() - 1);
+        break;
+      case "all":
+      default:
+        return new Date("2000-01-01");
+    }
+    return date;
+  };
+
+  const startDate = getStartDate(selectedDateRange);
+  console.log(startDate);
+  const filtered = allDates.filter((d) => d >= startDate && d <= now);
+
+  // console.log(filteredDates);
+  // --- Generate date buckets based on selected range ---
+  let buckets: { label: string; from: Date; to: Date }[] = [];
+
+  const createRangeLabel = (from: Date, to: Date) =>
+    `${from.toLocaleDateString("en-GB", {
+      month: "short",
+      day: "numeric",
+      year: "2-digit",
+    })} - ${to.toLocaleDateString("en-GB", {
+      month: "short",
+      day: "numeric",
+      year: "2-digit",
+    })}`;
+
+  if (selectedDateRange === "last_week") {
+    // Each date is a bucket
+    buckets = filtered.map((date) => ({
+      label: date.toISOString().slice(0, 10),
+      from: date,
+      to: date,
+    }));
+  } else if (selectedDateRange === "last_month") {
+    // Weekly buckets (7-day range)
+    const toDate = new Date(startDate);
+    for (let i = 0; i < 4; i += 1) {
+      const from = new Date(toDate);
+      toDate.setDate(toDate.getDate() + 7 + (i % 2));
+      const to = new Date(toDate);
+      buckets.push({ label: createRangeLabel(from, toDate), from, to });
+    }
+  } else if (selectedDateRange === "last_quarter") {
+    // Monthly buckets (1 month range)
+    const toDate = new Date(startDate);
+    for (let i = 0; i < 15 && toDate < now; i += 1) {
+      const from = new Date(toDate);
+      toDate.setMonth(toDate.getMonth() + 1);
+      const to = new Date(toDate);
+      buckets.push({ label: createRangeLabel(from, toDate), from, to });
+    }
+  } else if (selectedDateRange === "last_year") {
+    // Quarterly buckets (3 month range)
+    const toDate = new Date(startDate);
+    for (let i = 0; i < 15 && toDate < now; i += 1) {
+      const from = new Date(toDate);
+      toDate.setMonth(toDate.getMonth() + 3);
+      const to = new Date(toDate);
+      buckets.push({ label: createRangeLabel(from, toDate), from, to });
+    }
+  } else {
+    // "all" case – one single range
+    buckets = [{ label: "All Time", from: startDate, to: now }];
+  }
+  // console.log(buckets)
+  // --- Build chart data from buckets ---
+  const chartData = buckets.map(({ label, from, to }) => {
+    const entry: Record<string, any> = { category: label };
+
+    // Loop over each date in inputData within this range
+    Object.entries(inputData).forEach(([dateStr, villages]) => {
+      const date = new Date(dateStr);
+      if (date >= from && date <= to) {
+        Object.entries(villages).forEach(([village, count]) => {
+          allVillages.add(village);
+          if (!entry[village]) entry[village] = 0;
+          entry[village] += count;
+        });
+      }
+    });
+    // console.log(entry);
+
+    return entry;
+  });
+  // console.log(buckets, filtered);
+  return {
+    chartData,
+    dataKeys: Array.from(allVillages),
+  };
 }

@@ -86,7 +86,7 @@ const Analysis = ({ data, fullData, village, dataset }: AnalysisProps) => {
           );
         if (!hasData && village.length != 1) {
           chartData = (village.length > 1 ? village : Object.keys(fullData))
-            .map((villageName) => {
+            .map((villageName, index) => {
               const record = fullData[villageName];
               const value =
                 record?.[dataset as keyof VillageAggregatedData]?.[
@@ -102,8 +102,8 @@ const Analysis = ({ data, fullData, village, dataset }: AnalysisProps) => {
                   villageName.split("(")[0].replace(/_/g, " ")
                 ),
                 value: sum,
-                fill: getRandomColor(),
-                color: getRandomColor(),
+                fill: getRandomColor(index),
+                color: getRandomColor(index),
               };
             })
             .filter(Boolean) as typeof chartData;
