@@ -6,10 +6,13 @@ import { useLoader } from "@/hooks/use-loader";
 import Problems from "./Problems";
 import BarChartComponent from "@/components/BarChartComponent";
 import { generateChartConfig, transformItem } from "@/lib/utils";
+import StackedBarChartComponent from "@/components/StackedBarChartComponent";
 
 function HomePage() {
   const [data, setdata] = useState<Analytics | null>(null);
-  const [responseData, setResponseData] = useState<Analytics | null>(null);
+  const [responseData, setResponseData] = useState<Analytics>();
+  const [chartDataForDate, setChartDataForDate] = useState<any[]>([]);
+  const [dataKeysForDate, setDataKeysForDate] = useState<string[]>([]);
   const { startLoad, stopLoad } = useLoader();
   const getData = async () => {
     try {
@@ -80,6 +83,31 @@ function HomePage() {
     });
   }, [responseData]);
 
+  useEffect(() => {
+    if (!data) return;
+    const dates = Object.keys(data?.surveyCountByDate);
+    const allVillages = new Set<string>();
+
+    dates.forEach((date) => {
+      Object.keys(data?.surveyCountByDate[date]).forEach((village) =>
+        allVillages.add(village)
+      );
+    });
+
+    setDataKeysForDate(Array.from(allVillages));
+
+    setChartDataForDate(
+      dates.map((date) => {
+        const entry: any = { category: date };
+        dataKeysForDate.forEach((village) => {
+          if (data?.surveyCountByDate[date][village])
+            entry[village] = data?.surveyCountByDate[date][village];
+        });
+        return entry;
+      })
+    );
+  }, [data]);
+
   return (
     <div className="flex flex-wrap justify-center items-center gap-5 m-5">
       <span className="w-full uppercase text-center text-4xl font-bold text-amber-600">
@@ -118,13 +146,11 @@ function HomePage() {
         />
       </GraphWrapperComponent>
       <GraphWrapperComponent title="Date Wise Analysis">
-        <BarChartComponent
-          chartConfig={generateChartConfig(data?.surveyCountByDate ?? {})}
-          chartData={Object.keys(data?.surveyCountByDate ?? {}).map((key) => {
-            return { category: key, value: data?.surveyCountByDate[key] };
-          })}
+        <StackedBarChartComponent
+          chartConfig={generateChartConfig(chartDataForDate[0]?? {})}
+          chartData={chartDataForDate}
           XaxisdataKey="category"
-          datakeys={["value"]}
+          datakeys={dataKeysForDate}
         />
       </GraphWrapperComponent>
       {/* <div className="w-[90%]">

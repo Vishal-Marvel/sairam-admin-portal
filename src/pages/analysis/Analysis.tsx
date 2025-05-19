@@ -22,7 +22,7 @@ interface AnalysisProps {
 
 const Analysis = ({ data, fullData, village, dataset }: AnalysisProps) => {
   if (dataset == "crop_info") {
-    console.log(data);
+    // console.log(data);
     const chartData = Object.entries(data).map(([crop, values]) => ({
       category: capitalize(crop),
       area: values.crop_area,
@@ -110,7 +110,7 @@ const Analysis = ({ data, fullData, village, dataset }: AnalysisProps) => {
 
           hasData = chartData.length > 0;
         }
-        console.log(data, chartData);
+        // console.log(data, chartData);
 
         return (
           <GraphWrapperComponent

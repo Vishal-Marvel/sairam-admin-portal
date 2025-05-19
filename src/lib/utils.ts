@@ -1,4 +1,11 @@
-import { AvailableStatus, SchemeData, SurveyRecord, VillageAggregatedData, VillageWiseAnalyticalData, VillageWiseSchemes } from "@/schema";
+import {
+  AvailableStatus,
+  SchemeData,
+  SurveyRecord,
+  VillageAggregatedData,
+  VillageWiseAnalyticalData,
+  VillageWiseSchemes,
+} from "@/schema";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -15,7 +22,11 @@ export function generateChartConfig(data: Record<string, number>): ChartConfig {
   const config: ChartConfig = {
     value: { label: "Count", color: getRandomColor() },
     available: { label: "Available", color: "#00ff00" },
-    not_available: { label: "Not Available", fill: "#ffaa00", color: "#ffaa00" },
+    not_available: {
+      label: "Not Available",
+      fill: "#ffaa00",
+      color: "#ffaa00",
+    },
   };
 
   for (const key of Object.keys(data)) {
@@ -35,8 +46,20 @@ export function capitalize(text: string): string {
 }
 
 export function getRandomColor(): string {
-  const hue = Math.floor(Math.random() * 360); // Full hue range
-  return `hsl(${hue}, 70%, 60%)`; // Saturation and lightness fixed for readability
+  const colorPalette = [
+    "#4BC0C0",
+    "#FF9F40",
+    "#9966FF",
+    "#FF6384",
+    "#36A2EB",
+    "#C9CBCF",
+    "#00A896",
+    "#F67280",
+    "#F8B195",
+    "#355C7D",
+  ];
+  const index = Math.floor(Math.random() * 10); // Full hue range
+  return colorPalette[index]; // Saturation and lightness fixed for readability
 }
 
 export function getUniqueVillageNames(data: SurveyRecord[]): string[] {
@@ -103,7 +126,8 @@ export function mergeVillageAggregatedDataArray(
         // Nested merge
         for (const subKey in currentValue) {
           const subVal = currentValue[subKey as keyof typeof currentValue];
-          const mergedSubVal = mergedValue?.[subKey as keyof typeof mergedValue];
+          const mergedSubVal =
+            mergedValue?.[subKey as keyof typeof mergedValue];
 
           if (typeof subVal === "number") {
             // Numeric value
@@ -126,10 +150,7 @@ export function mergeVillageAggregatedDataArray(
 }
 
 // Helper to merge CountMap-like objects
-function mergeCountMaps<T extends Record<string, number>>(
-  a: T,
-  b: T
-): T {
+function mergeCountMaps<T extends Record<string, number>>(a: T, b: T): T {
   const result: Record<string, number> = { ...a };
   for (const key in b) {
     result[key] = (result[key] || 0) + b[key];

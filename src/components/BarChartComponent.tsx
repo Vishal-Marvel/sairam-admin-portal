@@ -29,11 +29,11 @@ interface BarChartComponentProps {
 }
 
 const BarChartComponent = (props: BarChartComponentProps) => {
-    const barWidth = Math.max(props.chartData?.length * 5, 35); // 50px per bar, with minimum fallback
+    // const barWidth = Math.max(props.chartData?.length * 5, 35); // 50px per bar, with minimum fallback
 
   return (
-    <div className="w-full">
-      <div style={{ width: `${barWidth}rem`, height: "15rem" }}>
+    <div className="w-full h-[15rem]">
+      {/* <div style={{ width: `${barWidth}rem`, height: "15rem" }}> */}
         <Bar
           className={"w-full"}
           data={{
@@ -91,7 +91,7 @@ const BarChartComponent = (props: BarChartComponentProps) => {
           }}
         />
       </div>
-    </div>
+    // </div>
   );
 };
 
