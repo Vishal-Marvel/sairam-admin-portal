@@ -85,12 +85,12 @@ export default function AnalysisPage() {
 
   return (
     <div className="flex flex-col justify-center items-center gap-5 m-5">
-      <span className="w-full uppercase text-center text-4xl font-bold text-amber-600">
+      <span className="w-full uppercase text-center md:text-4xl text-2xl font-bold text-amber-600">
         {currentDataset.replace(/_/g, " ")} analysis
       </span>
-      <div className="flex md:px-10 gap-2 w-full">
-        <div className="flex items-center gap-2">
-          <span>Get Analysis for </span>
+      <div className="flex md:px-10 gap-2 md:w-full">
+        <div className="flex items-center gap-2 ">
+          <span className="hidden md:block">Get Analysis for </span>
           <MultipleSelect
             options={Object.keys(data)
               .filter((village) => village !== "All Villages")

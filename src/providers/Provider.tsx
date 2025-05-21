@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/sonner";
 import { LoaderModal } from "@/components/Loader";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 export const publicRoutes = ["/", "/login"];
 
@@ -67,7 +68,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     >
       <Toaster position="top-right" />
       <LoaderModal />
-      {children}
+      <ScrollArea className="h-screen w-screen scroll-py-1 scroll-px-1"><ScrollBar orientation="horizontal"/>{children}</ScrollArea>
       <ScrollToTopButton />
     </SessionContext.Provider>
   );

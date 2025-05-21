@@ -17,7 +17,7 @@ interface SelectComponentProps {
 const SelectComponent = (props: SelectComponentProps) => {
   return (
     <div className="flex gap-2 items-center">
-      <span>{props.text || props.placeholder}:</span>
+      <span className="hidden md:block">{props.text || props.placeholder}:</span>
       <Select
         onValueChange={props.onChange}
         value={props.value}

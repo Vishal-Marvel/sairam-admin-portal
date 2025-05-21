@@ -23,7 +23,7 @@ const PieChartComponent = (props: PieChartComponentProps) => {
   const backgroundColor = props.chartData.map((item: any) => item.fill);
 
   return (
-    <div className="h-[15rem] w-full grid place-content-center">
+    <div className="h-[15rem] grid place-content-center">
       <Pie
         data={{
           labels,

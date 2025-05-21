@@ -46,7 +46,7 @@ export const Navigator = ({ fixed }: { fixed: boolean }) => {
           src="/uba-logo.webp"
           alt="UBA Logo"
           className={cn(
-            "abolute left-5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full",
+            "abolute md:left-5 right-5 md:right-0 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full",
             fixed ? "absolute" : "hidden"
           )}
         />
