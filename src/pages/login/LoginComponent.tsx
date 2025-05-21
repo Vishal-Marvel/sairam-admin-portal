@@ -67,7 +67,7 @@ const LoginComponent = () => {
   };
 
   return (
-    <Card className=" shadow-md bg-white/80 rounded-2xl w-1/3">
+    <Card className=" shadow-md bg-white/80 rounded-2xl md:w-1/3">
       <CardHeader>
         <CardTitle>Log In</CardTitle>
       </CardHeader>

@@ -116,7 +116,7 @@ const Analysis = ({ data, fullData, village, dataset }: AnalysisProps) => {
           <GraphWrapperComponent
             title={key.replace(/_/g, " ")}
             key={key}
-            width={graph ? "w-[25rem]" : "w-[35rem]"}
+            width={graph ? "md:w-[25rem]" : "md:w-[35rem]"}
           >
             {!hasData ? (
               <div className="grid place-content-center text-center text-gray-500 h-[15rem]">

@@ -32,7 +32,7 @@ export const Navigator = ({ fixed }: { fixed: boolean }) => {
     setActiveLink(
       links.find((link) => link.path === location.pathname)?.name || "home"
     );
-  }, []);
+  }, [location.pathname]);
 
   return (
     <div

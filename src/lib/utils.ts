@@ -216,7 +216,6 @@ export function getChartDataForDateRange(
   };
 
   const startDate = getStartDate(selectedDateRange);
-  console.log(startDate);
   const filtered = allDates.filter((d) => d >= startDate && d <= now);
 
   // console.log(filteredDates);

@@ -11,16 +11,16 @@ import { cn } from "@/lib/utils";
 import { Menu } from "lucide-react";
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { buttonVariants } from "./ui/button";
 
 interface MobileToggleProps {
-  links: { name: string; path: string }[];
+  links: { name: string; path: string; isVisible: boolean}[];
   activeLink: string;
 }
 
 const MobileToggle = (props: MobileToggleProps) => {
+  const [open, setOpen] = useState(false);
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger className="" asChild>
         <Menu className="text-white" />
       </SheetTrigger>
@@ -37,20 +37,23 @@ const MobileToggle = (props: MobileToggleProps) => {
               "flex flex-col gap-5 justify-around flex-wrap items-center "
             }
           >
-            {props.links.map((link) => (
-              <NavLink
-                key={link.name}
-                to={link.path}
-                className={({ isActive }) => {
-                  return cn(
-                    "  hover:underline uppercase",
-                    isActive && "font-bold"
-                  );
-                }}
-              >
-                {link.name}
-              </NavLink>
-            ))}
+            {props.links
+              .filter((link) => link.isVisible)
+              .map((link) => (
+                <NavLink
+                  key={link.name}
+                  to={link.path}
+                  className={({ isActive }) => {
+                    return cn(
+                      "  hover:underline uppercase",
+                      isActive && "font-bold"
+                    );
+                  }}
+                  onClick={() => setOpen(false)}
+                >
+                  {link.name}
+                </NavLink>
+              ))}
           </div>
         </SheetHeader>
       </SheetContent>
