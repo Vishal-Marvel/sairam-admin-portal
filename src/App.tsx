@@ -10,6 +10,7 @@ import AnalysisPage from "./pages/analysis";
 import LogoutPage from "./pages/logout";
 import StateSchemePage from "./pages/stateSchemes";
 import CentralSchemePage from "./pages/centralSchemes";
+
 function App() {
   return (
     <BrowserRouter>
