@@ -4,8 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/sonner";
 import { LoaderModal } from "@/components/Loader";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { SpeedInsights } from '@vercel/speed-insights/react';
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 export const publicRoutes = ["/", "/login"];
 
@@ -69,8 +68,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
     >
       <Toaster position="top-right" />
       <LoaderModal />
-       <SpeedInsights />
-      <ScrollArea className="h-screen w-screen scroll-py-1 scroll-px-1"><ScrollBar orientation="horizontal"/>{children}</ScrollArea>
+      <SpeedInsights />
+        {children}
       <ScrollToTopButton />
     </SessionContext.Provider>
   );
