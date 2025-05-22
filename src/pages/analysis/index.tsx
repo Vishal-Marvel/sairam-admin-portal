@@ -71,7 +71,6 @@ export default function AnalysisPage() {
   useEffect(() => {
     if (currentVillage.length == 0) {
       setCurrentData(data["All Villages"]);
-      
     } else {
       setCurrentData(mergeVillageAggregatedDataArray(currentVillage, data));
     }
@@ -109,17 +108,15 @@ export default function AnalysisPage() {
           />
         </div>
       </div>
-      <div className="flex flex-wrap justify-center items-center gap-5">
-        {currentData &&
-          currentData[currentDataset as keyof VillageAggregatedData] && (
-            <Analysis
-              fullData={data}
-              village={currentVillage}
-              dataset={currentDataset}
-              data={currentData[currentDataset as keyof VillageAggregatedData]}
-            />
-          )}
-      </div>
+      {currentData &&
+        currentData[currentDataset as keyof VillageAggregatedData] && (
+          <Analysis
+            fullData={data}
+            village={currentVillage}
+            dataset={currentDataset}
+            data={currentData[currentDataset as keyof VillageAggregatedData]}
+          />
+        )}
     </div>
   );
 }

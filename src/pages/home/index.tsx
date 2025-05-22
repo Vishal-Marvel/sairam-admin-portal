@@ -6,10 +6,8 @@ import { useLoader } from "@/hooks/use-loader";
 import Problems from "./Problems";
 import BarChartComponent from "@/components/BarChartComponent";
 import {
-  generateChartConfig,
   generateChartConfigForVillage,
   getChartDataForDateRange,
-  transformItem,
 } from "@/lib/utils";
 import StackedBarChartComponent from "@/components/StackedBarChartComponent";
 import SelectComponent from "@/components/SelectComponent";
@@ -114,8 +112,28 @@ function HomePage() {
       <span className="w-full uppercase text-center text-4xl font-bold text-amber-600">
         overall survey analysis
       </span>
+
+      <GraphWrapperComponent title="Village wise Survey count">
+        <BarChartComponent
+          chartConfig={surveyConfig}
+          chartData={data?.villageSummary}
+          XaxisdataKey="village_name"
+          datakeys={["total_surveys"]}
+        />
+      </GraphWrapperComponent>
+      <GraphWrapperComponent title="Village wise Family members count">
+        <BarChartComponent
+          chartConfig={familyMembersConfig}
+          chartData={data?.villageSummary}
+          XaxisdataKey="village_name"
+          datakeys={["total_members"]}
+        />
+      </GraphWrapperComponent>
       <GraphWrapperComponent
-        title="Date Wise Survey Analysis"
+        title={
+          dateRangeSelectorList.find((item) => item.value === selectedDateRange)
+            ?.label + " Date Wise Survey Analysis"
+        }
         width="md:w-[55rem] w-full"
       >
         <div className="flex flex-col items-end">
@@ -133,22 +151,6 @@ function HomePage() {
           />
         </div>
       </GraphWrapperComponent>
-      <GraphWrapperComponent title="Village wise Survey count">
-        <BarChartComponent
-          chartConfig={surveyConfig}
-          chartData={data?.villageSummary}
-          XaxisdataKey="village_name"
-          datakeys={["total_surveys"]}
-        />
-      </GraphWrapperComponent>
-      <GraphWrapperComponent title="Village wise Family members count">
-        <BarChartComponent
-          chartConfig={familyMembersConfig}
-          chartData={data?.villageSummary}
-          XaxisdataKey="village_name"
-          datakeys={["total_members"]}
-        />
-      </GraphWrapperComponent>
       <GraphWrapperComponent title="Village Wise Aadhaar Data">
         <BarChartComponent
           chartConfig={aadhaarChatConfig}
@@ -165,7 +167,7 @@ function HomePage() {
           datakeys={["total_surveys", "without_ration"]}
         />
       </GraphWrapperComponent>
-      
+
       {/* <div className="w-[90%]">
         <Problems problems={data?.problems ?? []} />
       </div> */}

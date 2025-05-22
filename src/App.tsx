@@ -21,8 +21,11 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/report" element={<ReportPage />} />
           <Route path="/analysis" element={<AnalysisPage />} />
-          <Route path="/stateSchemes" element={<StateSchemePage />} />
-          <Route path="/centralSchemes" element={<CentralSchemePage />} />
+          <Route path="/schemes/stateSchemes" element={<StateSchemePage />} />
+          <Route
+            path="/schemes/centralSchemes"
+            element={<CentralSchemePage />}
+          />
           <Route path="/logout" element={<LogoutPage />} />
 
           <Route path="*" element={<NotFoundPage />} />
