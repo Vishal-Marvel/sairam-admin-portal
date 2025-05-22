@@ -4,6 +4,8 @@ import { DataTableColumnHeader } from "@/components/ui/data-table/data-column-he
 
 import { SurveyRecord } from "@/schema";
 import FamilyMembers from "@/pages/report/FamilyMembers";
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "../button";
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 
@@ -30,13 +32,41 @@ export const surveyColumns: ColumnDef<SurveyRecord>[] = [
     accessorKey: "village_name",
     id: "village_name",
     header: () => <div className="text-center font-medium">Village Name</div>,
-    cell: ({ row }) => (
-      <div className="text-center font-medium">
-        {row.getValue("village_name")}
-      </div>
-    ),
+    cell: ({ row, column }) => {
+      const rawValue = String(row.getValue("village_name"));
+      const villageName = rawValue.split("(")[0].trim();
+
+      const selectedValues = new Set(
+        (column.getFilterValue() as string[]) || []
+      );
+
+      const isSelected = selectedValues.has(rawValue);
+
+      const toggleFilter = () => {
+        if (isSelected) {
+          selectedValues.delete(rawValue);
+        } else {
+          selectedValues.add(rawValue);
+        }
+
+        const newFilter = Array.from(selectedValues);
+        column.setFilterValue(newFilter.length ? newFilter : undefined);
+      };
+
+      return (
+        <div
+          onClick={toggleFilter}
+          className={cn(
+            "text-center font-medium cursor-pointer transition",
+            buttonVariants({ variant: "link" })
+          )}
+        >
+          {villageName}
+        </div>
+      );
+    },
     filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
+      return value.includes(String(row.getValue(id)));
     },
   },
   {
@@ -45,11 +75,36 @@ export const surveyColumns: ColumnDef<SurveyRecord>[] = [
     header: () => (
       <div className="text-center font-medium">Gram Panchayat Name</div>
     ),
-    cell: ({ row }) => (
-      <div className="text-center font-medium">
-        {row.getValue("gram_panchayat_name")}
-      </div>
-    ),
+    cell: ({ row, column }) => {
+      const rawValue = String(row.getValue("gram_panchayat_name"));
+      const selectedValues = new Set(
+        (column.getFilterValue() as string[]) || []
+      );
+
+      const isSelected = selectedValues.has(rawValue);
+
+      const toggleFilter = () => {
+        if (isSelected) {
+          selectedValues.delete(rawValue);
+        } else {
+          selectedValues.add(rawValue);
+        }
+
+        const newFilter = Array.from(selectedValues);
+        column.setFilterValue(newFilter.length ? newFilter : undefined);
+      };
+      return (
+        <div
+          onClick={toggleFilter}
+          className={cn(
+            "w-full text-center font-medium cursor-pointer transition",
+            buttonVariants({ variant: "link" })
+          )}
+        >
+          {rawValue}
+        </div>
+      );
+    },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
     },
@@ -79,9 +134,7 @@ export const surveyColumns: ColumnDef<SurveyRecord>[] = [
     id: "no_of_family_members_received",
     header: ({ column }) => {
       return (
-        <div className="text-center font-medium">
-          # of family members info received
-        </div>
+        <div className="text-center font-medium"># of family members</div>
         // <DataTableColumnHeader column={column} title="# of family members info received" />
       );
     },
@@ -100,17 +153,18 @@ export const surveyColumns: ColumnDef<SurveyRecord>[] = [
   {
     accessorKey: "has_ration_card",
     id: "has_ration_card",
-    header: ({ column }) => {
-      return <div className="text-center font-medium">Has Ration Card</div>;
-      // return <DataTableColumnHeader column={column} title="Has Ration Card" />;
-    },
-    cell: ({ row }) => (
-      <div className="text-center font-medium">
-        {row.getValue("has_ration_card") ? "Yes" : "No"}
-      </div>
+    header: () => (
+      <div className="text-center font-medium">Has Ration Card</div>
     ),
+    cell: ({ row }) => {
+      const value = row.getValue("has_ration_card");
+      return (
+        <div className="text-center font-medium">{value ? "Yes" : "No"}</div>
+      );
+    },
     filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
+      const val = row.getValue(id) ? "Yes" : "No";
+      return value.includes(val);
     },
   },
   {
@@ -120,63 +174,70 @@ export const surveyColumns: ColumnDef<SurveyRecord>[] = [
       return (
         <div className="text-center font-medium"># of Without Aadhaar</div>
       );
-      // return (
-      //   <DataTableColumnHeader column={column} title="# of Without Aadhaar" />
-      // );
-    },
-    cell: ({ row }) => (
-      <div className="text-center font-medium">
-        {row.getValue("no_of_members_without_aadhaar")}
-      </div>
-    ),
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
-    },
-  },
-
-  {
-    accessorKey: "piped_water_at_home",
-
-    header: () => (
-      <div className="text-center font-medium">Piped Water At Home</div>
-    ),
-    cell: ({ row }) => (
-      <div className="text-center font-medium">
-        {row.getValue("piped_water_at_home") ? "Yes" : "No"}
-      </div>
-    ),
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
-    },
-  },
-  {
-    accessorKey: "govt_or_private_supply",
-
-    header: () => (
-      <div className="text-center font-medium">Govt Or Private Supply</div>
-    ),
-    cell: ({ row }) => (
-      <div className="text-center font-medium">
-        {row.getValue("govt_or_private_supply") ? "Government" : "Private"}
-      </div>
-    ),
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
-    },
-  },
-  {
-    accessorKey: "electricity_connection",
-    header: () => {
-      return <div className="text-center">Electricity Connection</div>;
     },
     cell: ({ row }) => {
+      const value = Number(row.getValue("no_of_members_without_aadhaar"));
+      const members = row.original.family_info.filter(
+        (m) => m.aadhaar_status === "No"
+      );
       return (
         <div className="text-center font-medium">
-          {row.getValue("electricity_connection") ? "Yes" : "No"}
+          {value > 0 ?   <FamilyMembers
+            value={value}
+            members={members}
+          /> : value}
+        
         </div>
       );
     },
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
+    },
   },
+
+  // {
+  //   accessorKey: "piped_water_at_home",
+
+  //   header: () => (
+  //     <div className="text-center font-medium">Piped Water At Home</div>
+  //   ),
+  //   cell: ({ row }) => (
+  //     <div className="text-center font-medium">
+  //       {row.getValue("piped_water_at_home") ? "Yes" : "No"}
+  //     </div>
+  //   ),
+  //   filterFn: (row, id, value) => {
+  //     return value.includes(row.getValue(id));
+  //   },
+  // },
+  // {
+  //   accessorKey: "govt_or_private_supply",
+
+  //   header: () => (
+  //     <div className="text-center font-medium">Govt Or Private Supply</div>
+  //   ),
+  //   cell: ({ row }) => (
+  //     <div className="text-center font-medium">
+  //       {row.getValue("govt_or_private_supply") ? "Government" : "Private"}
+  //     </div>
+  //   ),
+  //   filterFn: (row, id, value) => {
+  //     return value.includes(row.getValue(id));
+  //   },
+  // },
+  // {
+  //   accessorKey: "electricity_connection",
+  //   header: () => {
+  //     return <div className="text-center">Electricity Connection</div>;
+  //   },
+  //   cell: ({ row }) => {
+  //     return (
+  //       <div className="text-center font-medium">
+  //         {row.getValue("electricity_connection") ? "Yes" : "No"}
+  //       </div>
+  //     );
+  //   },
+  // },
   // {
   //   accessorKey: "starting_date",
   //   header: ({ column }) => {

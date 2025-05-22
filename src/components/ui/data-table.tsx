@@ -50,7 +50,7 @@ export function DataTable<TData, TValue>({
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
   const [globalFilter, setGlobalFilter] = React.useState("");
-  const [pagination, setPagination] = React.useState<PaginationState>({pageSize:8, pageIndex:0});
+  const [pagination, setPagination] = React.useState<PaginationState>({pageSize:10, pageIndex:0});
 
   React.useEffect(() => {
     if (!visibleColumns) return;
