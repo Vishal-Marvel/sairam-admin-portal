@@ -6,12 +6,13 @@ export default function ScrollToTopButton() {
   const [showButton, setShowButton] = useState(false);
 
   useEffect(() => {
+    const scrollArea = document.getElementById("scroll-area");
     const handleScroll = () => {
-      setShowButton(window.scrollY > 100);
+      setShowButton(scrollArea?.scrollTop! > 100);
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    scrollArea?.addEventListener("scroll", handleScroll);
+    return () => scrollArea?.removeEventListener("scroll", handleScroll);
   }, []);
 
   return showButton ? (

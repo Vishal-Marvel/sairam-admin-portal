@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { LoaderModal } from "@/components/Loader";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
 import { SpeedInsights } from "@vercel/speed-insights/react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export const publicRoutes = ["/", "/login"];
 
@@ -69,7 +70,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <Toaster position="top-right" />
       <LoaderModal />
       <SpeedInsights />
-        {children}
+      <ScrollArea className="h-screen">{children}</ScrollArea>
       <ScrollToTopButton />
     </SessionContext.Provider>
   );

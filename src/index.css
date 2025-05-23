@@ -50,12 +50,10 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
-
-
-body {
-  min-width: 95vw;
-  min-height: 95vh;
+body{
+  overflow-y: hidden;
 }
+
 
 
 @theme inline {
