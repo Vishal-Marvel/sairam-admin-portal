@@ -83,9 +83,9 @@ export default function ReportPage() {
   };
 
   return (
-    <div className="flex items-center justify-center m-2 p-2 flex-col space-y-3">
+    <div className="flex items-center justify-center m-2 p-2 ">
       <div className="flex flex-col space-y-3">
-        <span className="uppercase text-2xl font-bold w-full text-center">
+        <span className="w-full uppercase text-center md:text-4xl text-2xl font-bold text-amber-600">
           survey report
         </span>
         <div className="flex items-center justify-end gap-2 w-full">

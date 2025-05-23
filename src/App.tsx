@@ -6,10 +6,10 @@ import Footer from "@/components/footer";
 import { Providers } from "@/providers/Provider";
 import Login from "@/pages/login";
 import ReportPage from "@/pages/report";
-import AnalysisPage from "./pages/analysis";
-import LogoutPage from "./pages/logout";
-import StateSchemePage from "./pages/stateSchemes";
-import CentralSchemePage from "./pages/centralSchemes";
+import AnalysisPage from "@/pages/analysis";
+import LogoutPage from "@/pages/logout";
+import StateSchemePage from "@/pages/schemes/StateSchemes";
+import CentralSchemePage from "@/pages/schemes/CentralSchemes";
 
 function App() {
   return (
