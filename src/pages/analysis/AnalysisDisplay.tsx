@@ -78,16 +78,28 @@ const AnalysisDisplay: React.FC<AnalysisProps> = ({
   hiddenList,
   hide = true,
 }) => {
+  // Precompute chart data for all keys using useMemo outside the loop
+  const chartDataMap = useMemo(() => {
+    const result: Record<
+      string,
+      {
+        chartData: any[];
+        chartConfig: any;
+        isPieChart: boolean;
+        hasData: boolean;
+      }
+    > = {};
+    Object.keys(data).forEach((key) => {
+      result[key] = getData(data, key as keyof Data, fullData, village, dataset);
+    });
+    return result;
+  }, [data, fullData, village, dataset]);
+
   return (
-    <>
+    <div className="flex flex-wrap justify-center items-center gap-5">
       {Object.keys(data).map((key) => {
         const displayKey = key.replace(/_/g, " ");
-
-        // Memoize getData result for each key, only recalculating when relevant dependencies change
-        const { chartData, chartConfig, isPieChart, hasData } = useMemo(
-          () => getData(data, key as keyof Data, fullData, village, dataset),
-          [data, fullData, village, dataset, key]
-        );
+        const { chartData, chartConfig, isPieChart, hasData } = chartDataMap[key];
 
         if (hide && hiddenList.includes(displayKey)) return null;
 
@@ -124,7 +136,7 @@ const AnalysisDisplay: React.FC<AnalysisProps> = ({
           </GraphWrapperComponent>
         );
       })}
-    </>
+    </div>
   );
 };
 

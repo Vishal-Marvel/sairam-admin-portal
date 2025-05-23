@@ -58,16 +58,14 @@ const Analysis = ({ data, fullData, village, dataset }: AnalysisProps) => {
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex flex-wrap justify-center items-center gap-5">
-        <AnalysisDisplay
-          data={data}
-          fullData={fullData}
-          village={village}
-          dataset={dataset}
-          toogleHiddenList={toggleHiddenList}
-          hiddenList={hiddenList}
-        />
-      </div>
+      <AnalysisDisplay
+        data={data}
+        fullData={fullData}
+        village={village}
+        dataset={dataset}
+        toogleHiddenList={toggleHiddenList}
+        hiddenList={hiddenList}
+      />
       {hiddenList.length > 0 && (
         <div>
           <span className="font-bold text-xl">Hidden Columns:</span>
