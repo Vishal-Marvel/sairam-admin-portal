@@ -19,7 +19,7 @@ export default function ScrollToTopButton() {
     <Button
       variant="outline"
       className="fixed bottom-5 right-5 z-50 cursor-pointer transition-all hover:-translate-y-2 duration-150 ease-in shadow-2xl"
-      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+      onClick={() => document.getElementById("scroll-area")?.scrollTo({ top: 0, behavior: "smooth" })}
     >
       <ChevronUp className="w-8 h-8" />
       <span className="sr-only">Scroll to top</span>
