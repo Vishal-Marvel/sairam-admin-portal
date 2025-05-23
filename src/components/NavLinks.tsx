@@ -5,48 +5,100 @@ import {
   TooltipProvider,
   TooltipTrigger,
   TooltipContent,
-  Tooltip
+  Tooltip,
 } from "@/components/ui/tooltip";
 import { NavLink } from "react-router-dom";
 
-const NavLinks = ({ links }: { links: LinkType[] }) => {
+type NavLinksProps = {
+  links: LinkType[];
+  mobile?: boolean;
+  closeDrawer?: () => void;
+};
+
+const MobileSubpaths: React.FC<{
+  subpaths: LinkType[];
+  closeDrawer?: () => void;
+}> = ({ subpaths, closeDrawer }) => (
+  <div className="relative flex flex-col">
+    {subpaths.map((sub) => (
+      <NavLink
+        key={sub.name}
+        to={sub.path ?? "/"}
+        onClick={closeDrawer}
+        className={({ isActive }) =>
+          cn(
+            "px-4 py-2 hover:underline text-sm uppercase w-full text-left",
+            isActive && "font-bold"
+          )
+        }
+      >
+        {sub.name}
+      </NavLink>
+    ))}
+  </div>
+);
+
+const DesktopSubpaths: React.FC<{
+  link: LinkType;
+}> = ({ link }) => (
+  <TooltipProvider>
+    <Tooltip>
+      <TooltipTrigger className="px-4 py-2 hover:underline uppercase">
+        {link.name}
+      </TooltipTrigger>
+      <TooltipContent
+        className="flex flex-col items-center"
+        side="bottom"
+        align="center"
+      >
+        {link.subpaths?.map((sub) => (
+          <NavLink
+            key={sub.name}
+            to={sub.path ?? "/"}
+            className={({ isActive }) =>
+              cn(
+                "px-4 py-2 hover:underline text-sm uppercase",
+                isActive && "font-bold"
+              )
+            }
+          >
+            {sub.name}
+          </NavLink>
+        ))}
+      </TooltipContent>
+    </Tooltip>
+  </TooltipProvider>
+);
+
+const NavLinks: React.FC<NavLinksProps> = ({
+  links,
+  mobile = false,
+  closeDrawer,
+}) => {
+  const containerClass = mobile
+    ? "flex flex-col gap-1 justify-around items-center"
+    : "hidden md:flex justify-end xl:space-x-[1rem] md:space-x-5 px-5 items-center text-white";
+
   return (
-    <>
+    <div className={cn(containerClass)}>
       {links
         .filter((link) => link.isVisible)
         .map((link) =>
           link.subpaths ? (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger className="px-4 py-2 hover:underline uppercase">
-                  {link.name}
-                </TooltipTrigger>
-                <TooltipContent
-                  className="flex flex-col items-center"
-                  side="bottom"
-                  align="center"
-                >
-                  {link.subpaths.map((sub) => (
-                    <NavLink
-                      key={sub.name}
-                      to={sub.path ?? "/"}
-                      className={({ isActive }) =>
-                        cn(
-                          "px-4 py-2 hover:underline text-sm uppercase",
-                          isActive && "font-bold"
-                        )
-                      }
-                    >
-                      {sub.name}
-                    </NavLink>
-                  ))}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            mobile ? (
+              <MobileSubpaths
+                key={link.name}
+                subpaths={link.subpaths}
+                closeDrawer={closeDrawer}
+              />
+            ) : (
+              <DesktopSubpaths key={link.name} link={link} />
+            )
           ) : (
             <NavLink
               key={link.name}
               to={link.path ?? "/"}
+              onClick={closeDrawer}
               className={({ isActive }) =>
                 cn(
                   "px-4 py-2 hover:underline uppercase",
@@ -58,7 +110,7 @@ const NavLinks = ({ links }: { links: LinkType[] }) => {
             </NavLink>
           )
         )}
-    </>
+    </div>
   );
 };
 
