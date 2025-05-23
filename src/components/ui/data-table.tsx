@@ -92,7 +92,7 @@ export function DataTable<TData, TValue>({
     <div className="space-y-4 bg-slate-100 p-3 rounded-lg ">
       <DataTableToolbar table={table} />
       <ScrollArea
-        className={cn("rounded-md w-[85vw] md:w-[70vw]", "md:h-[60vh] h-[50vh]")}
+        className={cn("rounded-md w-[85vw] md:w-[70vw]", " h-[75vh]")}
       >
         <Table>
           <TableHeader className="sticky top-0 bg-slate-300">

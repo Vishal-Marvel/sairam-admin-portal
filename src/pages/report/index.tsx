@@ -83,7 +83,7 @@ export default function ReportPage() {
         <span className="w-full uppercase text-center md:text-4xl text-2xl font-bold text-amber-600">
           survey report
         </span>
-        <div className="flex items-center md:justify-end gap-2 md:w-full">
+        <div className="flex items-center md:justify-end justify-center gap-2 md:w-full">
           <SelectComponent
             values={villageOptions}
             onChange={setCurrentVillage}
