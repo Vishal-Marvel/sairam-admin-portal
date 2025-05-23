@@ -9,6 +9,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import { ChartConfig } from "@/schema";
 
 ChartJS.register(
   BarElement,
@@ -19,67 +20,69 @@ ChartJS.register(
   ChartDataLabels
 );
 
-import { ChartConfig } from "@/schema";
-
 interface StackedBarChartComponentProps {
-  chartData: any;
+  chartData: any[];
   XaxisdataKey: string;
   datakeys: string[];
   chartConfig: ChartConfig;
 }
 
-const StackedBarChartComponent = (props: StackedBarChartComponentProps) => {
+const StackedBarChartComponent = ({
+  chartData = [],
+  XaxisdataKey,
+  datakeys,
+  chartConfig,
+}: StackedBarChartComponentProps) => {
+  const labels = chartData.map((data) => data[XaxisdataKey]);
+  const datasets = datakeys.map((datakey) => ({
+    label: chartConfig[datakey]?.label || datakey,
+    data: chartData.map((data) => data[datakey]),
+    backgroundColor: chartConfig[datakey]?.color || "gray",
+    borderWidth: 1,
+    borderRadius: 5,
+  }));
+
+  const options = {
+    maintainAspectRatio: false,
+    responsive: true,
+    indexAxis: "y" as const,
+    layout: {
+      padding: { left: 0, right: 0, top: 15, bottom: 0 },
+    },
+    scales: {
+      x: {
+        stacked: true,
+        grid: { display: false, offset: true },
+      },
+      y: {
+        stacked: true,
+      },
+    },
+    plugins: {
+      legend: {
+        position: "bottom" as const,
+        labels: { padding: 10 },
+      },
+      datalabels: {
+        display: true,
+        anchor: "center" as const,
+        align: "center" as const,
+        color: "black",
+        font: { weight: "bold" },
+      },
+    },
+  };
+
   return (
     <div className="w-full h-[20rem] overflow-x-auto">
-      {/* <div style={{ width: `${Math.max(props.chartData?.length * 5, 35)}rem`, height: "15rem" }}> */}
       <Bar
         className="w-full"
-        data={{
-          labels: props.chartData?.map((data: any) => data[props.XaxisdataKey]),
-          datasets: props.datakeys.map((datakey) => ({
-            label: props.chartConfig[datakey]?.label || datakey,
-            data: props.chartData?.map((data: any) => data[datakey]),
-            backgroundColor: props.chartConfig[datakey]?.color || "gray",
-            borderWidth: 1,
-            borderRadius: 5,
-            
-          })),
-        }}
+        data={{ labels, datasets }}
         width={50}
-        
-        options={{
-          maintainAspectRatio: false,
-          responsive: true,
-          scales: {
-            x: {
-              stacked: true,
-              grid: { display:false, offset: true },
-            },
-            y: {
-              stacked: true,
-            },
-          },
-          indexAxis: "y",
-          layout: {
-            padding: { left: 0, right: 0, top: 15, bottom: 0 },
-          },
-          plugins: {
-            legend: {
-              position: "bottom",
-              labels: { padding: 10 },
-            },
-            datalabels: {
-              display: true,
-              anchor: "center",
-              align: "center",
-              color: "black",
-              font: { weight: "bold" },
-            },
-          },
-        }}
+        //@ts-ignore
+        options={options}
       />
     </div>
-    // </div>
   );
 };
 

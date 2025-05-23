@@ -6,40 +6,43 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+interface Option {
+  label: string;
+  value: string;
+}
+
 interface SelectComponentProps {
-  values: { label: string; value: string }[];
+  values: Option[];
   onChange: (value: string) => void;
   value: string;
   placeholder: string;
-  text?:string
+  text?: string;
 }
 
-const SelectComponent = (props: SelectComponentProps) => {
-  return (
-    <div className="flex gap-2 items-center">
-      <span className="hidden md:block">{props.text || props.placeholder}:</span>
-      <Select
-        onValueChange={props.onChange}
-        value={props.value}
-        defaultValue={props.value}
-      >
-        <SelectTrigger className="capitalize">
-          <SelectValue placeholder={props.placeholder} />
-        </SelectTrigger>
-        <SelectContent>
-          {props.values.map((item) => (
-            <SelectItem
-              key={item.value}
-              value={item.value}
-              className="capitalize"
-            >
-              {item.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </div>
-  );
-};
+const SelectComponent: React.FC<SelectComponentProps> = ({
+  values,
+  onChange,
+  value,
+  placeholder,
+  text,
+}) => (
+  <div className="flex gap-2 items-center">
+    <span className="hidden md:block">
+      {text || placeholder}:
+    </span>
+    <Select onValueChange={onChange} value={value}>
+      <SelectTrigger className="capitalize">
+        <SelectValue placeholder={placeholder} />
+      </SelectTrigger>
+      <SelectContent>
+        {values.map(({ label, value }) => (
+          <SelectItem key={value} value={value} className="capitalize">
+            {label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  </div>
+);
 
 export default SelectComponent;

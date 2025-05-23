@@ -11,6 +11,16 @@ import {
 import { VillageAggregatedData, VillageWiseAnalyticalData } from "@/schema";
 import { Data } from "./Analysis";
 
+interface AnalysisProps {
+    data: Data;
+    fullData: VillageWiseAnalyticalData;
+    village: string[];
+    dataset: string;
+    toogleHiddenList: (title: string) => void;
+    hiddenList: string[];
+    hide?: boolean;
+}
+
 function getData(
     data: Data,
     key: keyof Data,
@@ -60,16 +70,6 @@ function getData(
     return { chartData, chartConfig, isPieChart, hasData };
 }
 
-interface AnalysisProps {
-    data: Data;
-    fullData: VillageWiseAnalyticalData;
-    village: string[];
-    dataset: string;
-    toogleHiddenList: (title: string) => void;
-    hiddenList: string[];
-    hide?: boolean;
-}
-
 const AnalysisDisplay: React.FC<AnalysisProps> = ({
     data,
     fullData,
@@ -82,7 +82,8 @@ const AnalysisDisplay: React.FC<AnalysisProps> = ({
     <>
         {Object.keys(data).map((key) => {
             const displayKey = key.replace(/_/g, " ");
-            if (hiddenList.includes(displayKey) && hide) return null;
+            if (hide && hiddenList.includes(displayKey)) return null;
+
             const { chartData, chartConfig, isPieChart, hasData } = getData(
                 data,
                 key as keyof Data,
@@ -90,6 +91,7 @@ const AnalysisDisplay: React.FC<AnalysisProps> = ({
                 village,
                 dataset
             );
+
             return (
                 <GraphWrapperComponent
                     title={displayKey}

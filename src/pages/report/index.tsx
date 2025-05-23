@@ -1,105 +1,98 @@
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { DataTable } from "@/components/ui/data-table";
 import { surveyColumns } from "@/components/ui/data-table/survey-columns";
 import { useLoader } from "@/hooks/use-loader";
 import { axiosInstance } from "@/lib/axiosConfig";
 import { SurveyRecord } from "@/schema";
-import { useEffect, useState } from "react";
 import SelectComponent from "@/components/SelectComponent";
 import { Download } from "lucide-react";
 import { VisibilityState } from "@tanstack/react-table";
 import { getUniqueVillageNames } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
+
+const ALL_VILLAGES = "All Villages";
 
 export default function ReportPage() {
   const [surveyData, setSurveyData] = useState<SurveyRecord[]>([]);
-  const [currentVillage, setCurrentVillage] = useState<string>("All Villages");
-
+  const [currentVillage, setCurrentVillage] = useState<string>(ALL_VILLAGES);
   const { startLoad, stopLoad } = useLoader();
-  const getData = async () => {
+
+  const fetchSurveyData = useCallback(async () => {
     try {
       startLoad();
-      const response = await axiosInstance.get("/surveyData/report");
-      setSurveyData(response.data);
+      const { data } = await axiosInstance.get("/surveyData/report");
+      setSurveyData(data);
     } catch (err) {
-      console.log(err);
+      console.error(err);
     } finally {
       stopLoad();
     }
-  };
-  const refreshData = async () => {
-    try {
-      const response = await axiosInstance.get("/surveyData/report");
-      if (response.data.length == surveyData.length) return;
-      setSurveyData(response.data);
-    } catch (err) {
-      console.log(err);
-    } finally {
-    }
-  };
+  }, [startLoad, stopLoad]);
+
+  // Initial fetch
   useEffect(() => {
-    getData();
-  }, []);
+    fetchSurveyData();
+  }, [fetchSurveyData]);
 
+  // Poll for new data every 3s, update only if length changes
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      refreshData();
-    }, 3000);
-
-    return () => clearInterval(intervalId);
-  }, [surveyData]);
-
-  const visibleColumns: VisibilityState = {
-    village_name: true,
-  };
-
-  const downloadData = async () => {
-    try {
-      if (currentVillage == "") {
-        toast("Please select a village");
-        return;
+    const intervalId = setInterval(async () => {
+      try {
+        const { data } = await axiosInstance.get("/surveyData/report");
+        if (data.length !== surveyData.length) setSurveyData(data);
+      } catch (err) {
+        console.error(err);
       }
+    }, 3000);
+    return () => clearInterval(intervalId);
+  }, [surveyData.length]);
+
+  const visibleColumns = useMemo<VisibilityState>(() => ({ village_name: true }), []);
+
+  const villageOptions = useMemo(
+    () =>
+      [
+        ALL_VILLAGES,
+        ...getUniqueVillageNames(surveyData),
+      ].map((village) => ({ value: village, label: village })),
+    [surveyData]
+  );
+
+  const downloadData = useCallback(async () => {
+    try {
       startLoad();
-
-      const response = await axiosInstance.get(
-        "/surveyData/download?village_name=" +
-          (currentVillage == "All Villages" ? "" : currentVillage),
-        {
-          maxBodyLength: Infinity,
-          responseType: "blob",
-        }
+      const params = currentVillage === ALL_VILLAGES ? "" : currentVillage;
+      const { data } = await axiosInstance.get(
+        `/surveyData/download?village_name=${params}`,
+        { maxBodyLength: Infinity, responseType: "blob" }
       );
-
-      //console.log(JSON.stringify(response.data));
       const link = document.createElement("a");
-      link.href = URL.createObjectURL(new Blob([response.data]));
+      link.href = URL.createObjectURL(new Blob([data]));
       link.download = `${currentVillage}.xlsx`;
       link.click();
     } catch (err) {
-      console.log(err);
+      console.error(err);
     } finally {
       stopLoad();
     }
-  };
+  }, [currentVillage, startLoad, stopLoad]);
 
   return (
-    <div className="flex items-center justify-center m-2 p-2 ">
+    <div className="flex items-center justify-center m-2 p-2">
       <div className="flex flex-col space-y-3">
         <span className="w-full uppercase text-center md:text-4xl text-2xl font-bold text-amber-600">
           survey report
         </span>
-        <div className="flex items-center justify-end gap-2 w-full">
+        <div className="flex items-center md:justify-end gap-2 md:w-full">
           <SelectComponent
-            values={["All Villages", ...getUniqueVillageNames(surveyData)].map(
-              (village) => ({ value: village, label: village })
-            )}
+            values={villageOptions}
             onChange={setCurrentVillage}
             value={currentVillage}
             placeholder="Select Village"
             text="Download Report for "
           />
           <Button
-            variant={"primary"}
+            variant="primary"
             className="flex gap-2 items-center justify-center cursor-pointer"
             onClick={downloadData}
           >

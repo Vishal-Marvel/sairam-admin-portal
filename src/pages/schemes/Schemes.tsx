@@ -1,3 +1,4 @@
+import React from "react";
 import BarChartComponent from "@/components/BarChartComponent";
 import GraphWrapperComponent from "@/components/GraphWrapperComponent";
 import {
@@ -6,71 +7,70 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { cn, generateData } from "@/lib/utils";
+import { generateData } from "@/lib/utils";
 import { CentralSchemes, ChartConfig, StateSchemes } from "@/schema";
-import React from "react";
 
-const beneficiariesConfig = {
-  count: {
-    label: "Beneficiaries",
-    color: "#666666",
+const chartConfigs: Record<string, ChartConfig> = {
+  beneficiaries: {
+    count: {
+      label: "Beneficiaries",
+      color: "#666666",
+    },
   },
-} satisfies ChartConfig;
+  awareness: {
+    count: {
+      label: "Average Awareness Level",
+      color: "#66b666",
+    },
+  },
+};
 
-const analysisConfig = {
-  count: {
-    label: "Average Awareness Level",
-    color: "#66b666",
-  },
-} satisfies ChartConfig;
-const Schemes = ({
-  schemeData,
-}: {
+type SchemesProps = {
   schemeData: StateSchemes | CentralSchemes;
-}) => {
+};
+
+const getSchemeTitle = (key: string) => key.replace(/_/g, " ");
+
+const Schemes: React.FC<SchemesProps> = ({ schemeData }) => {
+  const schemeKeys = Object.keys(schemeData);
+  const firstSchemeTitle = getSchemeTitle(schemeKeys[0]);
+
   return (
     <Accordion
-      
       type="multiple"
       className="md:w-[90%] w-full"
-      defaultValue={[Object.keys(schemeData)[0].replace(/_/g, " ")]}
+      defaultValue={[firstSchemeTitle]}
     >
-      {schemeData &&
-        Object.keys(schemeData).map((key) => (
-          <AccordionItem value={key.replace(/_/g, " ")} key={key}>
+      {schemeKeys.map((key) => {
+        const schemeTitle = getSchemeTitle(key);
+        const data = schemeData[key as keyof (StateSchemes | CentralSchemes)];
+
+        return (
+          <AccordionItem value={schemeTitle} key={key}>
             <AccordionTrigger className="capitalize font-bold text-xl self-center">
-              {key.replace(/_/g, " ") + " Scheme Analysis"}
+              {schemeTitle} Scheme Analysis
             </AccordionTrigger>
             <AccordionContent className="flex flex-wrap gap-5 justify-center">
-              <GraphWrapperComponent
-                title={key.replace(/_/g, " ") + " - Beneficiaries"}
-              >
+              <GraphWrapperComponent title={`${schemeTitle} - Beneficiaries`}>
                 <BarChartComponent
-                  chartConfig={beneficiariesConfig}
-                  chartData={generateData(
-                    schemeData?.[key as keyof (StateSchemes | CentralSchemes)],
-                    "beneficiaries"
-                  )}
+                  chartConfig={chartConfigs.beneficiaries}
+                  chartData={generateData(data, "beneficiaries")}
                   XaxisdataKey="village_name"
                   datakeys={["count"]}
                 />
               </GraphWrapperComponent>
-              <GraphWrapperComponent
-                title={key.replace(/_/g, " ") + " - Avg Awareness level"}
-              >
+              <GraphWrapperComponent title={`${schemeTitle} - Avg Awareness level`}>
                 <BarChartComponent
-                  chartConfig={analysisConfig}
-                  chartData={generateData(
-                    schemeData?.[key as keyof (StateSchemes | CentralSchemes)],
-                    "avg_awareness_level"
-                  )}
+                  chartConfig={chartConfigs.awareness}
+                  chartData={generateData(data, "avg_awareness_level")}
                   XaxisdataKey="village_name"
                   datakeys={["count"]}
                 />
               </GraphWrapperComponent>
             </AccordionContent>
           </AccordionItem>
-        ))}
+        );
+      })}
     </Accordion>
   );
 };

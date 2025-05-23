@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect, forwardRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Eye, EyeOff } from "lucide-react";
 import {
@@ -7,61 +7,65 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+
 interface PasswordInputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   placeholder?: string;
 }
 
-const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(
-  ({ placeholder, ...props }, ref) => {
+const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
+  ({ placeholder, disabled, ...props }, ref) => {
     const [view, setView] = useState(false);
     const [isMouseDown, setIsMouseDown] = useState(false);
-    const handleMouseDown = () => {
-      if (props.disabled != true) {
+
+    const showPassword = () => {
+      if (!disabled) {
         setIsMouseDown(true);
         setView(true);
       }
     };
-    const handleMouseUp = () => {
+
+    const hidePassword = () => {
       setIsMouseDown(false);
       setView(false);
     };
 
     useEffect(() => {
       if (view) {
-        const timer = setInterval(handleMouseUp, 800);
-        return () => clearInterval(timer);
+        const timer = setTimeout(hidePassword, 800);
+        return () => clearTimeout(timer);
       }
-    }, [view, isMouseDown]);
+    }, [view]);
 
     return (
-      <div className={"relative"}>
+      <div className="relative">
         <Input
           placeholder={placeholder}
           ref={ref}
           type={view ? "text" : "password"}
+          disabled={disabled}
           {...props}
         />
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger
-              className={"absolute right-4 top-[50%] -translate-y-[50%]"}
+              className="absolute right-4 top-1/2 -translate-y-1/2"
               tabIndex={-1}
             >
               {isMouseDown ? (
                 <EyeOff
-                  className="text-gray-600 h-5 cursor-pointer w-5 "
-                  onMouseUp={handleMouseUp}
-                  onMouseLeave={handleMouseUp}
-                  onTouchCancel={handleMouseUp}
-                  onTouchEnd={handleMouseUp}
-                  onTouchMove={handleMouseUp}
+                  className="text-gray-600 h-5 w-5 cursor-pointer"
+                  onMouseUp={hidePassword}
+                  onMouseLeave={hidePassword}
+                  onTouchEnd={hidePassword}
+                  onTouchCancel={hidePassword}
+                  onTouchMove={hidePassword}
                 />
               ) : (
                 <Eye
-                  className="text-gray-600 h-5 cursor-pointer w-5 "
-                  onMouseDown={handleMouseDown}
-                  onTouchStart={handleMouseDown}
+                  className="text-gray-600 h-5 w-5 cursor-pointer"
+                  onMouseDown={showPassword}
+                  onTouchStart={showPassword}
                 />
               )}
             </TooltipTrigger>
@@ -74,5 +78,7 @@ const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(
     );
   }
 );
+
+PasswordInput.displayName = "PasswordInput";
 
 export default PasswordInput;

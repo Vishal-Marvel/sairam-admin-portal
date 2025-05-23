@@ -34,7 +34,7 @@ export interface CombinedChartConfig {
 }
 
 interface CombinedChartComponentProps {
-  chartData: any;
+  chartData: Record<string, any>[];
   XaxisdataKey: string;
   datakeys: string[];
   chartConfig: CombinedChartConfig;
@@ -46,89 +46,82 @@ const CombinedChartComponent = ({
   datakeys,
   chartConfig,
 }: CombinedChartComponentProps) => {
-  const labels = chartData?.map((data: any) => data[XaxisdataKey]);
+  const labels = chartData?.map((data) => data[XaxisdataKey]);
 
-  const datasets = datakeys.map((key) => ({
-    type: chartConfig[key].type ?? "bar",
-    label: chartConfig[key].label,
-    data: chartData.map((data: any) => data[key]),
-    backgroundColor:
-      chartConfig[key].type === "line" ? undefined : chartConfig[key].color,
-    borderColor: chartConfig[key].color,
-    borderWidth: 2,
-    borderRadius: chartConfig[key].type === "bar" ? 5 : 0,
-    yAxisID: chartConfig[key].yAxisID ?? "y",
-    fill: false,
-    tension: 0.3,
-    stack: "combined",
-    pointBackgroundColor: chartConfig[key].color,
-    order: chartConfig[key].order,
-  }));
+  const datasets = datakeys.map((key) => {
+    const config = chartConfig[key];
+    return {
+      type: config.type ?? "bar",
+      label: config.label,
+      data: chartData.map((data) => data[key]),
+      backgroundColor: config.type === "line" ? undefined : config.color,
+      borderColor: config.color,
+      borderWidth: 2,
+      borderRadius: config.type === "bar" ? 5 : 0,
+      yAxisID: config.yAxisID ?? "y",
+      fill: false,
+      tension: 0.3,
+      stack: "combined",
+      pointBackgroundColor: config.color,
+      order: config.order,
+    };
+  });
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        grid: {
+          display: false,
+          offset: true,
+        },
+      },
+      y: {
+        type: "linear",
+        position: "left",
+        title: {
+          display: true,
+          text: "Area",
+        },
+      },
+      y1: {
+        type: "linear",
+        position: "right",
+        grid: {
+          drawOnChartArea: false,
+        },
+        title: {
+          display: true,
+          text: "Productivity",
+        },
+      },
+    },
+    layout: {
+      padding: { top: 15 },
+    },
+    plugins: {
+      legend: {
+        position: "bottom",
+        labels: { padding: 10 },
+      },
+      datalabels: {
+        anchor: "end",
+        align: "top",
+        color: "black",
+        formatter: Math.round,
+        padding: { top: -10 },
+      },
+    },
+  };
 
   return (
     <div className="h-[15rem] w-full">
       <Chart
         type="line"
-        data={{
-          labels,
-          datasets,
-        }}
-        options={{
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            x: {
-              grid: {
-                display: false,
-                offset: true,
-              },
-            },
-            y: {
-              type: "linear",
-              position: "left",
-              title: {
-                display: true,
-                text: "Area",
-              },
-            },
-            y1: {
-              type: "linear",
-              position: "right",
-              grid: {
-                drawOnChartArea: false, // prevents y1 grid from overlapping y
-              },
-              title: {
-                display: true,
-                text: "Productivity",
-              },
-            },
-          },
-          layout: {
-            padding: {
-              top: 15,
-            },
-          },
-          plugins: {
-            legend: {
-              position: "bottom",
-              labels: {
-                padding: 10,
-              },
-            },
-            datalabels: {
-              anchor: "end",
-              align: "top",
-              color: "black",
-              font: {
-                weight: "normal",
-              },
-              formatter: Math.round,
-              padding: {
-                top: -10,
-              },
-            },
-          },
-        }}
+        data={{ labels, datasets }}
+        //@ts-ignore
+        options={options}
       />
     </div>
   );

@@ -1,27 +1,28 @@
 import { useLoader } from "@/hooks/use-loader";
 import { axiosInstance } from "@/lib/axiosConfig";
 import { StateSchemes } from "@/schema";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Schemes from "./Schemes";
 
 export default function StateSchemePage() {
   const [schemeData, setSchemeData] = useState<StateSchemes>();
   const { startLoad, stopLoad } = useLoader();
 
-  const getData = async () => {
+  const getData = useCallback(async () => {
+    startLoad();
     try {
-      startLoad();
-      const response = await axiosInstance.get("/analytics/stateSchemes");
-      setSchemeData(response.data);
+      const { data } = await axiosInstance.get<StateSchemes>("/analytics/stateSchemes");
+      setSchemeData(data);
     } catch (err) {
-      console.log(err);
+      console.error(err);
     } finally {
       stopLoad();
     }
-  };
+  }, [startLoad, stopLoad]);
+
   useEffect(() => {
     getData();
-  }, []);
+  }, [getData]);
 
   return (
     <div className="flex flex-wrap justify-center items-center gap-5 m-5">

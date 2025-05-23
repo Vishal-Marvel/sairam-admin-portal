@@ -1,6 +1,6 @@
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { VillageAggregatedData, VillageWiseAnalyticalData } from "@/schema";
-import { useEffect, useState } from "react";
 import CropInfo from "./CropInfo";
 import AnalysisDisplay from "./AnalysisDisplay";
 import HiddenColms from "./HiddenColms";
@@ -21,15 +21,13 @@ const getHiddenListFromStorage = (dataset: string): string[] => {
   if (!stored) return [];
   return stored
     .split(",")
-    .filter((item) => item.startsWith(dataset + "."))
+    .filter((item) => item.startsWith(`${dataset}.`))
     .map((item) => item.split(".")[1]);
 };
 
 const setHiddenListToStorage = (list: string[], dataset: string) => {
-  localStorage.setItem(
-    LOCAL_STORAGE_KEY,
-    list.map((item) => `${dataset}.${item}`).join(",")
-  );
+  const value = list.map((item) => `${dataset}.${item}`).join(",");
+  localStorage.setItem(LOCAL_STORAGE_KEY, value);
 };
 
 const Analysis = ({ data, fullData, village, dataset }: AnalysisProps) => {
@@ -54,8 +52,8 @@ const Analysis = ({ data, fullData, village, dataset }: AnalysisProps) => {
     return <CropInfo data={data} />;
   }
 
-  const hiddenKeys = Object.keys(data).filter((item) =>
-    hiddenList.includes(item.replace(/_/g, " "))
+  const hiddenKeys = Object.keys(data).filter((key) =>
+    hiddenList.includes(key.replace(/_/g, " "))
   );
 
   return (
@@ -76,8 +74,8 @@ const Analysis = ({ data, fullData, village, dataset }: AnalysisProps) => {
           <div className="flex flex-wrap justify-center items-center gap-5">
             {hiddenKeys.map((key) => (
               <HiddenColms
-                title={key.replace(/_/g, " ")}
                 key={key}
+                title={key.replace(/_/g, " ")}
                 handleHide={toggleHiddenList}
               />
             ))}
