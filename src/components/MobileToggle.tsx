@@ -11,11 +11,12 @@ import { cn } from "@/lib/utils";
 import { Menu } from "lucide-react";
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
+import NavLinks from "./NavLinks";
 interface LinkType {
   name: string;
   path?: string;
   subpaths?: LinkType[];
-  isVisible: boolean;
+  isVisible?: boolean;
 }
 interface MobileToggleProps {
   links: LinkType[];
@@ -42,48 +43,7 @@ const MobileToggle = (props: MobileToggleProps) => {
               "flex flex-col gap-5 justify-around flex-wrap items-center "
             }
           >
-            {props.links
-              .filter((link) => link.isVisible)
-              .map((link) =>
-                link.subpaths ? (
-                  <div key={link.name} className="relative group inline-block">
-                    <span className="cursor-pointer uppercase hover:underline font-medium">
-                      {link.name}
-                    </span>
-                    <div className="absolute left-0 mt-1 hidden min-w-max flex-col bg-white shadow-md group-hover:flex z-50 border rounded-md">
-                      {link.subpaths
-                        .filter((sub) => sub.isVisible)
-                        .map((sub) => (
-                          <NavLink
-                            key={sub.name}
-                            to={sub.path ?? "/"}
-                            className={({ isActive }) =>
-                              cn(
-                                "px-4 py-2 hover:bg-gray-100 text-sm uppercase",
-                                isActive && "font-bold"
-                              )
-                            }
-                          >
-                            {sub.name}
-                          </NavLink>
-                        ))}
-                    </div>
-                  </div>
-                ) : (
-                  <NavLink
-                    key={link.name}
-                    to={link.path ?? "/"}
-                    className={({ isActive }) =>
-                      cn(
-                        "px-4 py-2 hover:underline uppercase",
-                        isActive && "font-bold"
-                      )
-                    }
-                  >
-                    {link.name}
-                  </NavLink>
-                )
-              )}
+           <NavLinks links={props.links}/>
           </div>
         </SheetHeader>
       </SheetContent>
