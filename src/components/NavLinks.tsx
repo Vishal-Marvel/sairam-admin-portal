@@ -19,7 +19,7 @@ const MobileSubpaths: React.FC<{
   subpaths: LinkType[];
   closeDrawer?: () => void;
 }> = ({ subpaths, closeDrawer }) => (
-  <div className="relative flex flex-col">
+  <div className="flex flex-row w-full justify-center gap-2">
     {subpaths.map((sub) => (
       <NavLink
         key={sub.name}
@@ -27,7 +27,7 @@ const MobileSubpaths: React.FC<{
         onClick={closeDrawer}
         className={({ isActive }) =>
           cn(
-            "px-4 py-2 hover:underline text-sm uppercase w-full text-left",
+            "px-4 py-2 hover:underline text-sm uppercase text-center",
             isActive && "font-bold"
           )
         }
@@ -76,7 +76,7 @@ const NavLinks: React.FC<NavLinksProps> = ({
   closeDrawer,
 }) => {
   const containerClass = mobile
-    ? "flex flex-col gap-1 justify-around items-center"
+    ? "flex flex-col gap-1 justify-center items-center"
     : "hidden md:flex justify-end xl:space-x-[1rem] md:space-x-5 px-5 items-center text-white";
 
   return (
