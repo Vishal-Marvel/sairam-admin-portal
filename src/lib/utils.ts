@@ -54,7 +54,11 @@ export function generateChartConfig(data: Record<string, number>): ChartConfig {
   const config: ChartConfig = {
     value: { label: "Count", color: getRandomColor() },
     available: { label: "Available", color: "#00ff00" },
-    not_available: { label: "Not Available", fill: "#ffaa00", color: "#ffaa00" },
+    not_available: {
+      label: "Not Available",
+      fill: "#ffaa00",
+      color: "#ffaa00",
+    },
   };
 
   Object.keys(data).forEach((key, index) => {
@@ -111,9 +115,7 @@ export function transformItem<Data extends Record<string, any>>(
 ) {
   const status: AvailableStatus = data[key][item];
   const value =
-    Object.keys(status ?? {}).length === 0
-      ? { value: status }
-      : { ...status };
+    Object.keys(status ?? {}).length === 0 ? { value: status } : { ...status };
 
   return {
     category: capitalize(item.replace(/_/g, " ")),
@@ -154,7 +156,8 @@ export function mergeVillageAggregatedDataArray(
       if (typeof currentValue === "object" && !Array.isArray(currentValue)) {
         for (const subKey in currentValue) {
           const subVal = currentValue[subKey as keyof typeof currentValue];
-          const mergedSubVal = mergedValue?.[subKey as keyof typeof mergedValue];
+          const mergedSubVal =
+            mergedValue?.[subKey as keyof typeof mergedValue];
 
           if (typeof subVal === "number") {
             // @ts-ignore
@@ -172,6 +175,33 @@ export function mergeVillageAggregatedDataArray(
   }
 
   return merged;
+}
+
+// Helper: create label for date range
+const createRangeLabel = (from: Date, to: Date) =>
+  `${from.toLocaleDateString("en-GB", {
+    month: "short",
+    day: "numeric",
+    year: "2-digit",
+  })} - ${to.toLocaleDateString("en-GB", {
+    month: "short",
+    day: "numeric",
+    year: "2-digit",
+  })}`;
+// Create weekly buckets for a month starting from a given date
+function createWeeklyBucketsForMonth(startDate: Date) {
+  const buckets = [];
+  const toDate = new Date(startDate);
+  const endOfMonth = new Date(); // last day of the month
+
+  while (toDate <= endOfMonth) {
+    const from = new Date(toDate);
+    toDate.setDate(toDate.getDate() + 7);
+    const to = new Date(Math.min(toDate.getTime(), endOfMonth.getTime())); // cap at end of month
+    buckets.push({ label: createRangeLabel(from, to), from, to });
+  }
+
+  return buckets;
 }
 
 // Get chart data for a date range
@@ -211,18 +241,6 @@ export function getChartDataForDateRange(
   const startDate = getStartDate(selectedDateRange);
   const filtered = allDates.filter((d) => d >= startDate && d <= now);
 
-  // Helper: create label for date range
-  const createRangeLabel = (from: Date, to: Date) =>
-    `${from.toLocaleDateString("en-GB", {
-      month: "short",
-      day: "numeric",
-      year: "2-digit",
-    })} - ${to.toLocaleDateString("en-GB", {
-      month: "short",
-      day: "numeric",
-      year: "2-digit",
-    })}`;
-
   // Generate date buckets
   let buckets: { label: string; from: Date; to: Date }[] = [];
   if (selectedDateRange === "last_week") {
@@ -232,13 +250,7 @@ export function getChartDataForDateRange(
       to: date,
     }));
   } else if (selectedDateRange === "last_month") {
-    const toDate = new Date(startDate);
-    for (let i = 0; i < 4; i++) {
-      const from = new Date(toDate);
-      toDate.setDate(toDate.getDate() + 7 + (i % 2));
-      const to = new Date(toDate);
-      buckets.push({ label: createRangeLabel(from, toDate), from, to });
-    }
+    buckets = createWeeklyBucketsForMonth(startDate);
   } else if (selectedDateRange === "last_quarter") {
     const toDate = new Date(startDate);
     for (let i = 0; i < 15 && toDate < now; i++) {
