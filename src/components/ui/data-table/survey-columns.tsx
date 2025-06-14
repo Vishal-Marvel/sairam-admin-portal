@@ -16,6 +16,18 @@ export const surveyColumns: ColumnDef<SurveyRecord>[] = [
     cell: ({ row }) => <div className="text-center">{row.index + 1}</div>,
     size: 50, // optional, controls column width
   },
+ {
+    accessorKey: "id",
+    id: "id",
+    header: ({ column }) => {
+      return <div className="text-center font-medium">ID</div>;
+    },
+    cell: ({ row }) => (
+      <div className="text-center font-medium ">
+        {row.getValue("id")}
+      </div>
+    ),
+  },
   {
     accessorKey: "survey_date",
     id: "survey_date",

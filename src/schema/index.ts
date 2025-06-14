@@ -409,6 +409,7 @@ export type FamilyMember = {
 };
 
 export type SurveyRecord = {
+  id:string;
   survey_id: string;
   gram_panchayat_code: string;
   gram_panchayat_name: string;
