@@ -16,7 +16,7 @@ function SurveyToolBar<TData>({ table }: DataTableToolbarProps<TData>) {
             table.getColumn("village_name")?.getFacetedUniqueValues() ?? []
           ).map((value) => ({
             value: value[0],
-            label: capitalize(value[0]),
+            label: capitalize(value[0]??""),
           }))}
         />
       )}
@@ -29,7 +29,7 @@ function SurveyToolBar<TData>({ table }: DataTableToolbarProps<TData>) {
               []
           ).map((value) => ({
             value: value[0],
-            label: capitalize(value[0]),
+            label: capitalize(value[0]??""),
           }))}
         />
       )}
