@@ -9,7 +9,7 @@ export type VillageSummary = {
 export type Analytics = {
   villageSummary: VillageSummary[];
   problems: ProblemStatements[];
-  surveyCountByDate:  NestedCoutMap
+  surveyCountByDate: NestedCoutMap;
 };
 export type AvailableStatus = { available: number; not_available: number };
 type CountMap = Record<string, number>;
@@ -409,7 +409,8 @@ export type FamilyMember = {
 };
 
 export type SurveyRecord = {
-  id:string;
+  id: string;
+
   survey_id: string;
   gram_panchayat_code: string;
   gram_panchayat_name: string;
@@ -419,9 +420,8 @@ export type SurveyRecord = {
   village_name: string;
   no_of_family_members: number;
   family_info: FamilyMember[];
-  piped_water_at_home: boolean;
-  govt_or_private_supply: boolean;
-  electricity_connection: boolean;
+  schedule_filed_by: string;
+  college_id: string;
   has_ration_card: boolean;
   no_of_members_without_aadhaar: number;
 };

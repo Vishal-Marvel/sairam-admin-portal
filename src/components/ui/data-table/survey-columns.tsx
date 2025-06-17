@@ -16,15 +16,28 @@ export const surveyColumns: ColumnDef<SurveyRecord>[] = [
     cell: ({ row }) => <div className="text-center">{row.index + 1}</div>,
     size: 50, // optional, controls column width
   },
- {
+  {
     accessorKey: "id",
     id: "id",
     header: ({ column }) => {
       return <div className="text-center font-medium">ID</div>;
     },
     cell: ({ row }) => (
+      <div className="text-center font-medium ">{row.getValue("id")}</div>
+    ),
+  },
+  {
+    accessorKey: "schedule_filed_by",
+    id: "schedule_filed_by",
+    header: ({ column }) => {
+      return <div className="text-center font-medium">Student Name</div>;
+    },
+    cell: ({ row }) => (
       <div className="text-center font-medium ">
-        {row.getValue("id")}
+        {row.getValue("schedule_filed_by") || "N/A"}
+        {" ("}
+        {row.original.college_id || "N/A"}
+        {")"}
       </div>
     ),
   },
@@ -194,11 +207,11 @@ export const surveyColumns: ColumnDef<SurveyRecord>[] = [
       );
       return (
         <div className="text-center font-medium">
-          {value > 0 ?   <FamilyMembers
-            value={value}
-            members={members}
-          /> : value}
-        
+          {value > 0 ? (
+            <FamilyMembers value={value} members={members} />
+          ) : (
+            value
+          )}
         </div>
       );
     },
