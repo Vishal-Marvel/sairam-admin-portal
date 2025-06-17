@@ -92,7 +92,7 @@ export function DataTable<TData, TValue>({
     <div className="space-y-4 bg-slate-100 p-3 rounded-lg ">
       <DataTableToolbar table={table} />
       <ScrollArea
-        className={cn("rounded-md w-[85vw] md:w-[70vw]", " h-[75vh]")}
+        className={cn("rounded-md w-[87vw] md:w-[80vw]", " h-[75vh]")}
       >
         <Table>
           <TableHeader className="sticky top-0 bg-slate-300">
@@ -127,7 +127,7 @@ export function DataTable<TData, TValue>({
                   className={onRowClick && "cursor-pointer"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className=" text-center whitespace-normal break-words">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

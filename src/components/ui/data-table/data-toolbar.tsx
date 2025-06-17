@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { DataTableViewOptions } from "./data-view-options";
 import SurveyToolBar from "./survey-toolbar";
+import { DataTablePagination } from "./data-pagination";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -42,6 +43,7 @@ export function DataTableToolbar<TData>({
             </Button>
           )}
         </div>
+          <DataTablePagination show={false} table={table} />
       </div>
       {/* <DataTableViewOptions table={table} /> */}
     </div>

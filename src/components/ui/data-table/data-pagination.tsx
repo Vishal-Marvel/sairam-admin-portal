@@ -14,18 +14,31 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 interface DataTablePaginationProps<TData> {
   table: Table<TData>;
+  show?: boolean;
 }
 
 export function DataTablePagination<TData>({
   table,
+  show = true,
 }: DataTablePaginationProps<TData>) {
   return (
-    <div className="flex items-center justify-center p-4 ">
+    <div
+      className={cn(
+        "flex flex-grow items-center justify-center  ",
+        show && "p-4"
+      )}
+    >
       <div className="flex items-center space-x-6 lg:space-x-8 md:flex-row flex-col gap-5">
-        <div className="flex items-center space-x-2">
+        <div
+          className={cn(
+            "flex items-center space-x-2",
+            show ? "flex" : "hidden"
+          )}
+        >
           <p className="text-sm font-medium">Rows per page</p>
           <Select
             value={`${table.getState().pagination.pageSize}`}
@@ -45,7 +58,12 @@ export function DataTablePagination<TData>({
             </SelectContent>
           </Select>
         </div>
-        <div className="flex w-[100px] items-center justify-center text-sm font-medium">
+        <div
+          className={cn(
+            "flex w-[100px] items-center justify-center text-sm font-medium",
+            show ? "flex" : "hidden"
+          )}
+        >
           Page {table.getState().pagination.pageIndex + 1} of{" "}
           {table.getPageCount()}
         </div>
@@ -61,21 +79,64 @@ export function DataTablePagination<TData>({
           </Button>
           <Button
             variant="outline"
-            className="h-8 w-8 p-0"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
+            className={cn(
+              "h-8 w-8 p-0",
+              table.getState().pagination.pageIndex - 1 <= 0 ? "hidden" : "flex"
+            )}
+            onClick={() =>
+              table.setPageIndex(table.getState().pagination.pageIndex - 2)
+            }
           >
-            <span className="sr-only">Go to previous page</span>
-            <ChevronLeftIcon className="h-4 w-4" />
+            <span className="">
+              {table.getState().pagination.pageIndex - 1}
+            </span>
+          </Button>
+
+          <Button
+            variant="outline"
+            className={cn(
+              "h-8 w-8 p-0",
+              table.getState().pagination.pageIndex === 0 ? "hidden" : "flex"
+            )}
+            onClick={() => table.previousPage()}
+          >
+            <span className="">{table.getState().pagination.pageIndex}</span>
+          </Button>
+          <Button className="h-8 w-8 p-0">
+            <span className="">
+              {table.getState().pagination.pageIndex + 1}
+            </span>
           </Button>
           <Button
             variant="outline"
-            className="h-8 w-8 p-0"
+            className={cn(
+              "h-8 w-8 p-0",
+              table.getState().pagination.pageIndex + 1 === table.getPageCount()
+                ? "hidden"
+                : "flex"
+            )}
             onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
           >
-            <span className="sr-only">Go to next page</span>
-            <ChevronRightIcon className="h-4 w-4" />
+            <span className="">
+              {table.getState().pagination.pageIndex + 2}
+            </span>
+          </Button>
+
+          <Button
+            variant="outline"
+            className={cn(
+              "h-8 w-8 p-0",
+              table.getState().pagination.pageIndex + 2 >= table.getPageCount()
+                ? "hidden"
+                : "flex"
+            )}
+            onClick={() =>
+              table.setPageIndex(table.getState().pagination.pageIndex + 2)
+            }
+          >
+            <span className="">
+              {table.getState().pagination.pageIndex + 3}
+            </span>
           </Button>
           <Button
             variant="outline"
