@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { DataTable } from "@/components/ui/data-table";
 import { surveyColumns } from "@/components/ui/data-table/survey-columns";
 import { useLoader } from "@/hooks/use-loader";
@@ -9,6 +9,8 @@ import { Download } from "lucide-react";
 import { VisibilityState } from "@tanstack/react-table";
 import { getUniqueVillageNames } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { onValue, ref } from "firebase/database";
+import { database } from "@/lib/firebase";
 
 const ALL_VILLAGES = "All Villages";
 
@@ -20,6 +22,7 @@ export default function ReportPage() {
   const fetchSurveyData = useCallback(async () => {
     try {
       startLoad();
+      console.log("Fetching survey data...", new Date());
       const { data } = await axiosInstance.get("/surveyData/report");
       setSurveyData(data);
     } catch (err) {
@@ -34,27 +37,34 @@ export default function ReportPage() {
     fetchSurveyData();
   }, [fetchSurveyData]);
 
-  // Poll for new data every 3s, update only if length changes
-  useEffect(() => {
-    const intervalId = setInterval(async () => {
-      try {
-        const { data } = await axiosInstance.get("/surveyData/report");
-        if (data.length !== surveyData.length) setSurveyData(data);
-      } catch (err) {
-        console.error(err);
-      }
-    }, 3000);
-    return () => clearInterval(intervalId);
-  }, [surveyData.length]);
+  // Track previous value without causing re-renders
+  const previousValueRef = useRef(null);
 
-  const visibleColumns = useMemo<VisibilityState>(() => ({ village_name: true }), []);
+  useEffect(() => {
+    const dbRef = ref(database, "survey_data");
+
+    const unsubscribe = onValue(dbRef, (snapshot) => {
+      const currentValue = snapshot.val();
+      if (currentValue !== previousValueRef.current) {
+        previousValueRef.current = currentValue;
+        fetchSurveyData();
+      }
+    });
+
+    return () => unsubscribe(); // Clean up listener
+  }, [fetchSurveyData]);
+
+  const visibleColumns = useMemo<VisibilityState>(
+    () => ({ village_name: true }),
+    []
+  );
 
   const villageOptions = useMemo(
     () =>
-      [
-        ALL_VILLAGES,
-        ...getUniqueVillageNames(surveyData),
-      ].map((village) => ({ value: village, label: village })),
+      [ALL_VILLAGES, ...getUniqueVillageNames(surveyData)].map((village) => ({
+        value: village,
+        label: village,
+      })),
     [surveyData]
   );
 
