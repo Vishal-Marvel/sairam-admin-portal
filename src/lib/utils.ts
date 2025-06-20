@@ -240,7 +240,6 @@ export function getChartDataForDateRange(
 
   const startDate = getStartDate(selectedDateRange);
   const filtered = allDates.filter((d) => d >= startDate && d <= now);
-
   // Generate date buckets
   let buckets: { label: string; from: Date; to: Date }[] = [];
   if (selectedDateRange === "last_week") {
@@ -273,6 +272,7 @@ export function getChartDataForDateRange(
 
   // Build chart data from buckets
   const chartData = buckets.map(({ label, from, to }) => {
+    let counter = 0;
     const entry: Record<string, any> = { category: label };
     Object.entries(inputData).forEach(([dateStr, villages]) => {
       const date = new Date(dateStr);
@@ -280,9 +280,11 @@ export function getChartDataForDateRange(
         Object.entries(villages).forEach(([village, count]) => {
           allVillages.add(village);
           entry[village] = (entry[village] || 0) + count;
+          counter += count;
         });
       }
     });
+    entry["category"] = `${label}, (${counter})`;
     return entry;
   });
 

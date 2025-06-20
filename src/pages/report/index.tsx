@@ -3,7 +3,7 @@ import { DataTable } from "@/components/ui/data-table";
 import { surveyColumns } from "@/components/ui/data-table/survey-columns";
 import { useLoader } from "@/hooks/use-loader";
 import { axiosInstance } from "@/lib/axiosConfig";
-import { SurveyRecord } from "@/schema";
+import { SurveyDates, SurveyRecord } from "@/schema";
 import SelectComponent from "@/components/SelectComponent";
 import { Download } from "lucide-react";
 import { VisibilityState } from "@tanstack/react-table";
@@ -11,13 +11,29 @@ import { getUniqueVillageNames } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { onValue, ref } from "firebase/database";
 import { database } from "@/lib/firebase";
+import { toast } from "sonner";
 
 const ALL_VILLAGES = "All Villages";
 
 export default function ReportPage() {
   const [surveyData, setSurveyData] = useState<SurveyRecord[]>([]);
+  const [surveyDates, setSurveyDates] = useState<SurveyDates[]>([]);
   const [currentVillage, setCurrentVillage] = useState<string>(ALL_VILLAGES);
+  const [selectedDate, setSelectedDate] = useState<string>("");
   const { startLoad, stopLoad } = useLoader();
+
+  const fetchSurveyDates = useCallback(async () => {
+    try {
+      startLoad();
+      console.log("Fetching survey dates...", new Date());
+      const { data } = await axiosInstance.get("/surveyData/date-wise-count");
+      setSurveyDates(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      stopLoad();
+    }
+  }, [startLoad, stopLoad]);
 
   const fetchSurveyData = useCallback(async () => {
     try {
@@ -35,7 +51,8 @@ export default function ReportPage() {
   // Initial fetch
   useEffect(() => {
     fetchSurveyData();
-  }, [fetchSurveyData]);
+    fetchSurveyDates();
+  }, [fetchSurveyData, fetchSurveyDates]);
 
   // Track previous value without causing re-renders
   const previousValueRef = useRef(null);
@@ -70,22 +87,27 @@ export default function ReportPage() {
 
   const downloadData = useCallback(async () => {
     try {
+      if (!selectedDate) {
+        toast.error("Please select a date to download the report.");
+        return;
+      }
       startLoad();
+
       const params = currentVillage === ALL_VILLAGES ? "" : currentVillage;
       const { data } = await axiosInstance.get(
-        `/surveyData/download?village_name=${params}`,
+        `/surveyData/download?village_name=${params}&date=${selectedDate}`,
         { maxBodyLength: Infinity, responseType: "blob" }
       );
       const link = document.createElement("a");
       link.href = URL.createObjectURL(new Blob([data]));
-      link.download = `${currentVillage}.xlsx`;
+      link.download = `${currentVillage}_${selectedDate}.xlsx`;
       link.click();
     } catch (err) {
       console.error(err);
     } finally {
       stopLoad();
     }
-  }, [currentVillage, startLoad, stopLoad]);
+  }, [currentVillage, startLoad, stopLoad, selectedDate]);
 
   return (
     <div className="flex items-center justify-center m-2 p-2">
@@ -100,6 +122,16 @@ export default function ReportPage() {
             value={currentVillage}
             placeholder="Select Village"
             text="Download Report for "
+          />
+          <SelectComponent
+            values={surveyDates.map((date) => ({
+              value: date.date,
+              label: `${date.date} (${date.total})`,
+            }))}
+            onChange={setSelectedDate}
+            value={selectedDate}
+            placeholder="Select Date"
+            text="for Date"
           />
           <Button
             variant="primary"

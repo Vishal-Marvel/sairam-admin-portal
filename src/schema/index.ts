@@ -432,3 +432,8 @@ export type VillageGroupedData = Record<string, SurveyRecord[]>;
 export type VillageSurveyData = Record<string, HouseholdData>;
 
 export type AllVillagesData = Record<string, VillageSurveyData>;
+
+export type SurveyDates = {
+  date: string;
+  total: number;
+}
